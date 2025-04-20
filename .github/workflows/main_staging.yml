@@ -1,0 +1,28 @@
+name: Push-to-EC2-ٍStaging
+
+# Trigger deployment only on push to master branch
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    name: Deploy to EC2 on master branch push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v2
+        with:
+          ref: staging
+
+      - name: Deploy to Server 1
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: /home/forge/frontend_staging/HapptTrip
+          SCRIPT_AFTER: |
+            sudo supervisorctl restart daemon-708993:*

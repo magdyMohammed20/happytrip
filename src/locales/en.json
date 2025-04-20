@@ -1,0 +1,43 @@
+{
+    "header":{
+        "home":"Home",
+        "cars":"Cars",
+        "featuredHotels":"Featured Hotels",
+        "lang":"Language",
+        "english":"English",
+        "arabic":"Arabic"
+    },
+    "home":{
+        "lookingForHotels" : "Looking For Hotels?",
+        "hotel":"Hotel",
+        "flight":"Flight",
+        "oneWay":"One way",
+        "roundTrip":"Round Trip",
+        "to":"To",
+        "selectDestination":"Select Destination",
+        "chooseCheckinAndCheckoutDate":"Choose checkin and checkout dates",
+        "multicity":"Multicity",
+        "adultsNumber":"Adults Number",
+        "kidsNumber":"Kids Number",
+        "room":"Room",
+        "checkAvailaiblty":"CheckAvailaiblty",
+        "checkPackages":"Check Packages",
+        "loginToseeYourFreeNights":"Login to see your free nights",
+        "happyTripLoyaltyProgram":"Happy Trip Loyalty Program",
+        "collect15nights":"Collect 15 nights",
+        "get1nightfree":"Get 1 night free",
+        "loyalityDetails":"As the world's largest student and youth travel company, we've been booking affordable adventures for awesome humans since 1979. Experts in Round the World flights, tours, accommodation and good vibes - whatever your adventure, it starts right here. As the world's largest student and youth travel company, we've been booking affordable adventures for awesome humans since 1979. Experts in Round the World flights, tours, accommodation and good vibes - whatever your adventure, it starts right here. As the world's largest student and youth travel company, we've been booking affordable adventures for awesome good vibes - whatever your adventure, it starts right here.",
+        "exploreMore":"Explore More",
+        "getTheHappyTripApp":"Get the Happy Trip App !",
+        "getTheHappyTripAppDetails":"Looking to manage your flight and hotel needs efficiently? BlazeBe does exactly that for you in a few simple taps with artistic user interface and secure payment channels.",
+        "getTheApp":"Get The App",
+        "superiorBookingExperience":"Superior Booking Experience",
+        "superiorBookingExperienceDetails":"Ease of booking, fantastic products and competitive pricing makes the booking experience amazing",
+        "whyWorkWithUs":"Why work with us?",
+        "whyWorkWithUsDetails":"You are unique, and so is your trip. When you book with Liberty Travel, we match you with an expert best suited to design a vacation just for you.",
+        "signUpForWeeklyDeals":"Sign up for weekly Deals*",
+        "signUpForWeeklyDealsDetails":"Subscribe to our newsletter so we can spam you with offers and discounts.",
+        "enterYourEmail":"Enter your Email",
+        "send":"Send"
+    }
+}

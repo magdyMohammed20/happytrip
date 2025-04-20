@@ -1,0 +1,3 @@
+<template>
+    LOGGGGG OUUUUT
+</template>

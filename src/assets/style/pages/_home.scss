@@ -1,0 +1,83 @@
+//variables
+:root {
+  --el-color-primary: #5808d8;
+  --el-color-primary-light-3: #5b21b6;
+  --el-color-primary-light-5: #6d28d9;
+  --el-color-primary-light-7: #7c3aed;
+  --el-color-primary-light-8: #8b5cf6;
+  --el-color-primary-light-9: #c2aafa;
+}
+
+// menu navbar
+.el-menu {
+  border: none;
+}
+.el-menu--horizontal .el-menu-item:not(.is-disabled):hover,
+.el-menu--horizontal .el-menu-item:not(.is-disabled):focus {
+  background-color: transparent;
+}
+.el-menu--horizontal > .el-menu-item {
+  border-bottom: none;
+}
+.el-menu--horizontal > .el-menu-item.is-active {
+  border-bottom: none;
+}
+
+// inputs
+.pill .el-input__wrapper {
+  border-radius: 20px;
+  height: 30px;
+  display: flex;
+}
+
+.borderBotOnly .el-input__wrapper {
+  box-shadow: none;
+  border-bottom: 1px solid rgb(156, 156, 156);
+  border-radius: 0;
+  padding: 0;
+}
+
+// tabs
+.el-tabs__nav-wrap::after {
+  width: 0 !important;
+}
+.el-tabs__header {
+  margin: 0 !important;
+}
+.el-tabs__content {
+  display: none;
+}
+
+// date picker
+.el-date-editor.el-input {
+  width: fit-content !important;
+}
+
+// cards
+.el-card__header {
+  width: 100%;
+  padding: 0;
+  background-color: #ebebef;
+  border-bottom: 2px solid #b0b1c0;
+}
+// headers
+h1 {
+  font-size: 30px !important;
+  font-weight: 700;
+  margin: 5px 0;
+}
+h4{
+  font-weight: 800;
+}
+.heder-line{
+  width: 25%;
+  color: #5808d8;
+  height: 5px;
+  border: none;
+  background-color: #5808d8;
+  margin-left: 0;
+}
+//tabs
+.el-tabs--border-card ,.el-tabs--border-card > .el-tabs__header ,.el-tabs--border-card > .el-tabs__header ,.el-tabs__item {
+  border-radius: 10px;
+}

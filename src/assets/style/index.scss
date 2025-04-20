@@ -1,0 +1,122 @@
+@import "./pages/home";
+@import url('https://fonts.googleapis.com/css2?family=Cairo&family=Kolker+Brush&family=Open+Sans&display=swap');
+html,
+body {
+    font-family: 'Cairo', sans-serif;
+    // font-family: 'Kolker Brush', cursive;
+    font-family: 'Open Sans', sans-serif;
+    overflow-x: hidden;
+}
+
+body {
+    overflow: hidden;
+    margin: 0
+}
+
+#app {
+    font-family: 'Cairo', sans-serif;
+    font-family: 'Kolker Brush', cursive;
+    font-family: 'Open Sans', sans-serif;
+}
+
+button,
+.el-dropdown__popper.el-popper {
+    border-radius: 0.75rem !important;
+}
+
+.el-input__wrapper {
+    border-radius: 0.75rem !important;
+    padding: 5px 10px !important;
+}
+
+.custom-border {
+    border-radius: 0.75rem !important;
+}
+
+.vilot-bg {
+    background-color: #5808d8 !important;
+}
+
+.white-bg {
+    background-color: #ffffff !important;
+}
+
+.router-link {
+    text-align: center !important;
+    padding: 8px !important;
+    border-radius: 0.75rem;
+    text-decoration: none !important;
+}
+
+.el-card {
+    border-radius: 0.75rem !important;
+}
+
+.custom-extra-bold {
+    text-shadow: 1px 0px, 0px 1px, 0px 0px;
+}
+
+.small-purble-text {
+    font-weight: 800;
+    color: #5808d8;
+    font-size: small;
+}
+
+.subheader {
+    color: rgb(67, 67, 67);
+    font-size: 10pt;
+    font-weight: 100;
+}
+
+.account-tabs>.el-tabs__content {
+    color: #6b778c;
+    font-size: 32px;
+    font-weight: 600;
+    display: block !important;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #cbd5e1;
+    /*adding border after and before dev that is centered*/
+    margin: 15px;
+}
+
+.separator:not(:empty)::after {
+    margin: 15px;
+}
+
+.custom-button {
+    background-color: #1CCF3D !important;
+    color: white !important;
+    padding: 20px !important;
+}
+.delete-btn{
+    color: red !important;
+}
+
+.timeline>.el-timeline-item>.el-timeline-item__tail{
+    border: #1CCF3D 2px solid !important;
+    border-radius: 10px;
+}
+// @media only screen and (max-width: 1024px) {
+//     .handle-right-nav {
+//       justify-content: start;
+//       overflow: hidden;
+//       width: 80%;
+//       border-radius: 15px;
+//       background-color: #5808d8;
+//     }
+//     .rohmbus{
+//         display: none;
+//     }
+    
+//   }
