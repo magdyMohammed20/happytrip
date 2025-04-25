@@ -125,7 +125,7 @@ export default {
     }
 }
 </script>
-<style >
+<style>
 .el-collapse {
     border-top-color: transparent;
 }

@@ -45,12 +45,37 @@ const actions = {
             commit("SET_COUNTRIES", [...res.data]);
         })
     },
-    fetchCountriesWithCodes({ state, commit } ,searchText) {
-        return axios.get('api/destinations', {params: { search: searchText }}).then((res) => {
+    fetchCountriesWithCodes({ state, commit, dispatch }, searchText) {
+        
+/* // Fetch Google Places
+fetch('https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Dubai&language=ar&types=(cities)&key=AIzaSyAtPw2FPVcDAA-ywgtLdvsfb3Oo3wCAagU', {
+  method: 'GET',
+  headers: {
+    'Accept-Language': 'en',
+  }
+})
+.then(response => response.json())
+.then(data => {
+  console.log(data);
+})
+.catch(error => {
+  console.error('Error:', error);
+}); */
+      
+
+       /*  return axios.get('api/destinations', { params: { search: searchText } }).then((res) => {
+           
             commit("SET_COUNTRIES_CODES", res.data.data);
+        }) */
+    },
+
+    fetchTopCities({ state, commit }) {
+
+        return axios.get('api/hotel-vendors/cities?top_cities=1').then((res) => {
+            commit("SET_COUNTRIES_CODES", res.data.data.cities);
         })
     },
-    fetchNationalities({ state, commit }) {
+    fetchNationalities({ state, commit }) { 
         return axios.get('api/nationality/all').then((res) => {
             commit("SET_NATIONALITIES", res.data.data);
         })

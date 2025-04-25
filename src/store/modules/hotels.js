@@ -17,7 +17,9 @@ const state = {
   hotelsLoader: true,
   roomsLoader: false,
   cancellationDialog: false,
-  cancellationDialogData: {}
+  cancellationDialogData: {},
+  connection: null,
+  cache_key: null
 };
 // mutations
 const mutations = {
@@ -78,12 +80,74 @@ const mutations = {
   },
   SET_ROOM_LOADING(state, payload) {
     state.roomsLoader = payload
-  }
+  },
+    SET_CONNECTION(state, payload) {
+    state.connection = payload;
+  },
+    SET_CACHE_KEY(state, payload) {
+    state.cache_key = payload;
+  },
 };
 // actions
 const actions = {
   fetchHotels({ commit, dispatch, state }, filters) {
-    // let str = JSON.stringify(filters)
+
+    commit("SET_AVAILABLE_HOTELS_LOADER", true);
+      
+    const x = new WebSocket('wss://stg-py.happytbooking.com/api/v1/hotels/ws/search')
+      
+    commit("SET_CONNECTION",x);
+
+    state.connection.onopen = function (e) {
+              
+      const payload = {
+        place_id: filters.destinationCode,
+        check_in: filters.checkIn,
+        check_out: filters.checkOut,
+        rooms: filters.rooms,
+        nationality: "EG",
+        currency: filters.currency
+      }
+      
+      state.connection.send(JSON.stringify(payload));
+
+    }
+    
+    
+    state.connection.onmessage = function (e) {
+      try {
+        const response = JSON.parse(e.data);
+
+        if (response.code == 200) {
+
+          // خزّن البيانات في الستور
+          commit("SET_CACHE_KEY" , response.data.cache_key)
+          commit("SET_AVAILABLE_HOTELS", response);
+          commit("SET_AVAILABLE_HOTELS_LOADER", false);
+          commit("SET_ENABLE_FILTERS", true);
+          state.connection.close()
+
+        }
+      } catch (err) {
+        commit("SET_AVAILABLE_HOTELS_LOADER", false);
+                  state.connection.close()
+
+      }
+    };
+
+    // في حالة وجود خطأ
+    state.connection.onerror = function (err) {
+      console.error("WebSocket Error ❌", err);
+      commit("SET_AVAILABLE_HOTELS_LOADER", false);
+    };
+
+    // عند إغلاق الاتصال
+    state.connection.onclose = function () {
+      console.log("WebSocket Closed");
+    };
+
+
+    /* // let str = JSON.stringify(filters)
     commit("SET_AVAILABLE_HOTELS_LOADER", true);
     return axios
       .get("/api/mapping/hotels/search", { params: filters })
@@ -95,7 +159,91 @@ const actions = {
       .then((res) => {
         dispatch("fetchAvailbleHotel", { uuid: state.uuid });
         return res
-      });
+      }); */
+  },
+    fetchFilteredHotels({ commit, dispatch, state }, filters) {
+
+    commit("SET_AVAILABLE_HOTELS_LOADER", true);
+      
+      const x = new WebSocket('wss://stg-py.happytbooking.com/api/v1/hotels/ws/filter')
+      
+    commit("SET_CONNECTION",x);
+
+    state.connection.onopen = function (e) {
+              
+      // const payload = {
+      //   action: "apply_filters",
+      //   search_id: state.cache_key,
+      //   sort_by_price: "asc",
+      //   hotel_name: filters.hotel_name,
+      //   sort_by_rating: "asc"
+      //  /*  filters: {
+      //     "price_range": {
+      //       "min": 100,
+      //       "max": 800
+      //     },
+      //     "star_rating": [2, 3, 4, 5]
+      //   } */
+      // }
+
+      const payload = {
+        action: "apply_filters",
+        search_id: state.cache_key,
+        ...filters
+      }
+
+      state.connection.send(JSON.stringify(payload));
+
+    }
+    
+    
+     state.connection.onmessage = function (e) {
+      try {
+        const response = JSON.parse(e.data);
+
+        if (response.code == 200) {
+
+          // خزّن البيانات في الستور
+          commit("SET_CACHE_KEY" , response.data.cache_key)
+          commit("SET_AVAILABLE_HOTELS", response);
+          commit("SET_AVAILABLE_HOTELS_LOADER", false);
+          commit("SET_ENABLE_FILTERS", true);
+          console.log('Heloooooooooo' , response)
+          state.connection.close()
+
+        }
+      } catch (err) {
+        commit("SET_AVAILABLE_HOTELS_LOADER", false);
+                  state.connection.close()
+
+      }
+    };
+
+    // في حالة وجود خطأ
+    state.connection.onerror = function (err) {
+      console.error("WebSocket Error ❌", err);
+      commit("SET_AVAILABLE_HOTELS_LOADER", false);
+    };
+
+    // عند إغلاق الاتصال
+    state.connection.onclose = function () {
+      console.log("WebSocket Closed");
+    };
+ 
+
+    /* // let str = JSON.stringify(filters)
+    commit("SET_AVAILABLE_HOTELS_LOADER", true);
+    return axios
+      .get("/api/mapping/hotels/search", { params: filters })
+      .then((res) => {
+        commit("SET_SEARCH_HOTELS", res.data);
+        commit("SET_UUID", res.data.searchData.uuid);
+        return res;
+      })
+      .then((res) => {
+        dispatch("fetchAvailbleHotel", { uuid: state.uuid });
+        return res
+      }); */
   },
   fetchAvailbleHotel({ state, commit }, filters) {
     return axios.get(`/api/available-hotels-cache-search?page=${state.page}`, { params: filters })

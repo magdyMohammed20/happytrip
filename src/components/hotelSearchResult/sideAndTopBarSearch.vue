@@ -10,9 +10,7 @@
             <p class="mt-0 mb-0 font-thin">SEARCH SUMMERY</p>
             <P class="font-bold mb-0 mt-0" v-if="!hotelsLoader">{{ availbleHotels.destination }}</P>
             <div class="flex align-center" v-if="!hotelsLoader">
-              <span
-                class="text-xs font-bold mt-0 mb-0 text-slate-500" 
-              >from :{{ availbleHotels.checkIn }} </span>
+              <span class="text-xs font-bold mt-0 mb-0 text-slate-500">from :{{ availbleHotels.checkIn }} </span>
               <!-- music-note-whole -->
 
               <span class="text-xs font-bold mt-0 px-1 text-slate-500 flex align-center">
@@ -50,107 +48,64 @@
         <div class="py-5">
           <p class="font-bold text-md">
             Sort by
-            <span
-              class="text-blue font-light text-xs cursor-pointer"
-              @click="
-                filters.sort = '';
-                onSearch();
-              "
-            >(Clear this filter)</span>
+            <span class="text-blue font-light text-xs cursor-pointer" @click="
+              filters.sort = '';
+            onSearch();
+            ">(Clear this filter)</span>
           </p>
 
-          <el-radio
-            v-model="filters.sort"
-            :disabled="!enableFilters"
-            label="rating"
-            class="block"
-            @change="onSearch()"
-          >Rate</el-radio>
-          <el-radio
-            v-model="filters.sort"
-            :disabled="!enableFilters"
-            label="price"
-            @change="onSearch()"
-          >Price</el-radio>
+          <el-radio v-model="filters.sort" :disabled="!enableFilters" label="rating" class="block"
+            @change="onSearch('rate')">Rate</el-radio>
+          <el-radio v-model="filters.sort" :disabled="!enableFilters" label="price"
+            @change="onSearch('price')">Price</el-radio>
         </div>
         <div class="py-5">
           <p class="font-bold text-md">
             Hotel Search
-            <span
-              class="text-blue font-light text-xs cursor-pointer"
-              @click="
-                filters.name = '';
-                onSearch();
-              "
-            >(Clear this filter)</span>
+            <span class="text-blue font-light text-xs cursor-pointer" @click="
+              filters.hotel_name = '';
+            onSearch();
+            ">(Clear this filter)</span>
           </p>
-          <el-input
-            v-model="filters.name"
-            placeholder="Search"
-            :disabled="!enableFilters"
-            @input="onSearch()"
-            class="borderBotOnly"
-          />
+          <el-input v-model="filters.hotel_name" placeholder="Search" :disabled="!enableFilters" @input="onSearch()"
+            class="borderBotOnly" />
         </div>
         <div></div>
 
         <div class="slider-demo-block py-5">
           <p class="font-bold text-md">
             Search by Price
-            <span
-              class="text-blue font-light text-xs cursor-pointer"
-              @click="clearPrices()"
-            >(Clear this filter)</span>
+            <span class="text-blue font-light text-xs cursor-pointer" @click="clearPrices()">(Clear this filter)</span>
           </p>
           <div>
-            {{ availbleHotels.maxPrice ? formatePriceRange(filters.price) : ''}}
-          <el-slider
-            v-if="availbleHotels.maxPrice"
-            :disabled="!enableFilters"
-            show-input
-            @change="
+            {{ availbleHotels.maxPrice ? formatePriceRange(filters.price) : '' }}
+            <el-slider v-if="availbleHotels.maxPrice" :disabled="!enableFilters" show-input @change="
               formatePriceRange(filters.price);
-              onSearch();
-            "
-            v-model="filters.price"
-            :min="(Number(availbleHotels.minPrice))"
-            :max="(Number(availbleHotels.maxPrice))"
-            range
-            class
-          />
-          <div class="flex justify-between">
-            <p class="inline text-xs text-slate-400">{{ first }}</p>
-            <p class="inline text-xs text-slate-400">{{ last }}</p>
+            onSearch();
+            " v-model="filters.price" :min="(Number(availbleHotels.minPrice))" :max="(Number(availbleHotels.maxPrice))"
+              range class />
+            <div class="flex justify-between">
+              <p class="inline text-xs text-slate-400">{{ first }}</p>
+              <p class="inline text-xs text-slate-400">{{ last }}</p>
+            </div>
           </div>
-          </div>
-          
+
         </div>
 
         <div class="slider-demo-block w-70 mx-auto py-5">
           <p class="font-bold text-md">
             Search Rating
-            <span
-              class="text-blue font-light text-xs cursor-pointer"
-              @click="
-                filters.rating = [];
-                onSearch();
-              "
-            >(Clear this filter)</span>
+            <span class="text-blue font-light text-xs cursor-pointer" @click="
+              filters.rating = [];
+            onSearch();
+            ">(Clear this filter)</span>
           </p>
           <div v-if="availbleHotels.rates">
-            <div v-for="(rate , index) in availbleHotels.rates.length" :key="rate" class="py-2">
-              <el-checkbox
-                @change="onSearch()"
-                v-model="filters.rating"
-                :name="rate"
-                :label="availbleHotels.rates[index].rate"
-                class="check-box-color inline pt-0 mt-0"
-                size="large"
-              />
+            <div v-for="(rate, index) in availbleHotels.rates.length" :key="rate" class="py-2">
+              <el-checkbox @change="onSearch()" v-model="filters.rating" :name="rate"
+                :label="availbleHotels.rates[index].rate" class="check-box-color inline pt-0 mt-0" size="large" />
               <p class="inline px-1"> Star</p>
-              <p
-                class="inline text-slate text-3"
-              >({{ availbleHotels.rates[index].rateCount }} Hotels)</p>
+              <p class="inline text-slate text-3">({{ availbleHotels.rates[index].rateCount }} Hotels)</p>
             </div>
           </div>
 
@@ -308,14 +263,52 @@ export default {
         min_price: 0,
         rating: [],
         sort: "",
-        name: "",
+        hotel_name: "",
         price: [0, 500000]
       }
     };
   },
   methods: {
-    onSearch() {
-      console.log("iam search function  ");
+    onSearch(attr) {
+
+      //this.SET_AVAILABLE_HOTELS_LOADER(true);
+
+      if (attr) {
+
+        if (attr == 'price') {
+          this.filters = {
+            ...this.filters,
+            hotel_name: this.filters.hotel_name,
+            sort_by_price: 'asc'
+          }
+        } else if (attr == 'rate') {
+          this.filters = {
+            ...this.filters,
+            hotel_name: this.filters.hotel_name,
+            sort_by_rating: 'asc'
+          }
+        } else {
+          this.filters = {
+            ...this.filters,
+            hotel_name: this.filters.hotel_name
+          }
+        }
+
+
+      }
+
+
+      this.fetchFilteredHotels(this.filters)
+        .finally(() => {
+          //this.SET_AVAILABLE_HOTELS_LOADER(false);
+        });
+
+      /* this.fetchFilteredHotels(this.filters).finally(() => {
+        this.SET_AVAILABLE_HOTELS_LOADER(false);
+      }); */
+
+
+      /* console.log("iam search function  ");
       if (this.userChangesTimeOut) {
         clearTimeout(this.userChangesTimeOut);
       }
@@ -327,9 +320,9 @@ export default {
         this.fetchAvailbleHotel(this.filters).finally(() => {
           this.SET_AVAILABLE_HOTELS_LOADER(false);
         });
-      }, 500);
+      }, 500); */
     },
-    ...mapMutations("hotels", ["SET_AVAILABLE_HOTELS_LOADER","SET_AVAILABLE_HOTELS"]),
+    ...mapMutations("hotels", ["SET_AVAILABLE_HOTELS_LOADER", "SET_AVAILABLE_HOTELS"]),
     openFullScreen2() {
       const loading = this.$loading({
         lock: true,
@@ -355,6 +348,7 @@ export default {
       }
     },
     ...mapActions("hotels", ["fetchAvailbleHotel"]),
+    ...mapActions("hotels", ["fetchFilteredHotels"]),
     handleChange: val => {
       console.log(val);
     }
@@ -397,7 +391,7 @@ export default {
   border-radius: 0px;
 }
 
-.checkbox-input > .el-checkbox__input {
+.checkbox-input>.el-checkbox__input {
   display: none !important;
 }
 
@@ -430,16 +424,16 @@ export default {
   margin: auto;
 }
 
-.check-box-color > .el-checkbox__input.is-checked > .el-checkbox__inner {
+.check-box-color>.el-checkbox__input.is-checked>.el-checkbox__inner {
   background-color: #000000 !important;
 }
 
-.check-box-color > .el-checkbox__label {
+.check-box-color>.el-checkbox__label {
   color: #000000 !important;
 }
 
-.last-item > div > div,
-.last-item > .el-collapse-item__wrap {
+.last-item>div>div,
+.last-item>.el-collapse-item__wrap {
   border-bottom: 0px solid;
 }
 
@@ -447,7 +441,7 @@ export default {
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
 }
 
-.title-collapse > div > div {
+.title-collapse>div>div {
   font-weight: 800;
   color: #000000 !important;
 }

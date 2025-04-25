@@ -25,9 +25,9 @@
         <div class="w-full my-5">
           <el-form-item prop="destinationCode">
             <el-select v-model="destinationObj.code" filterable :trigger-on-focus="true" remote clearable
-              reserve-keyword placeholder="Select Destination" :remote-method="fetchCountriesWithCodes"
-              remote-show-suffix class="w-full" @change="form.destinationCode = destinationObj.code">
-              <el-option v-for="item in countriesWithCodes" :key="item.code" :label="item.name" :value="item.code" />
+              reserve-keyword placeholder="Select Destination" :remote-method="fetchTopCities" remote-show-suffix
+              class="w-full" @change="form.destinationCode = destinationObj.code">
+              <el-option v-for="item in countriesWithCodes" :key="item.id" :label="item.name" :value="item.place_id" />
             </el-select>
           </el-form-item>
         </div>
@@ -46,14 +46,14 @@
         <div v-for="(room, index) in form.rooms" :key="room">
           <p class="text-xs text-slate-400 pb-0 mb-0">Room {{ index + 1 }}</p>
           <div class="flex">
-            <el-input-number v-model="room.Adults" class="my-1" :min="0" :max="9" placeholder="Adults" />
-            <el-input-number v-model="room.Children" class="m-1" :min="0" :max="9" placeholder="Kids"
-              @change="handleChangeCountOfKids(index, room.Children)" />
+            <el-input-number v-model="room.adults_number" class="my-1" :min="0" :max="9" placeholder="adults_number" />
+            <el-input-number v-model="room.children_number" class="m-1" :min="0" :max="9" placeholder="Kids"
+              @change="handleChangeCountOfKids(index, room.children_number)" />
           </div>
           <div class="flex m-1 gap-3 w-80 flex-wrap">
             <!-- [Number(childRoom) -1] in orderto add in index zero of  room.ChildrenAges array not on index 1 -->
-            <el-select v-for="childRoom in Number(room.ChildrenAges.length)" :key="childRoom"
-              v-model="room.ChildrenAges[Number(childRoom) - 1]" placeholder="Kid Age" style="width: 140px">
+            <el-select v-for="childRoom in Number(room.children_ages.length)" :key="childRoom"
+              v-model="room.children_ages[Number(childRoom) - 1]" placeholder="Kid Age" style="width: 140px">
               <el-option v-for="item in 12" :key="item" :label="item" :value="item" />
             </el-select>
           </div>
@@ -97,9 +97,9 @@ export default {
         nationality: "EG",
         rooms: [
           {
-            Adults: 2,
-            Children: null,
-            ChildrenAges: [],
+            adults_number: 2,
+            children_number: null,
+            children_ages: [],
           },
         ],
         checkIn: "",
@@ -129,6 +129,8 @@ export default {
   },
 
   methods: {
+    ...mapActions("globalStore", ["fetchTopCities"]),
+
     toPage() {
       const path = "/HotelSearchResult";
       let enCodeQuery = encodeURIComponent(JSON.stringify(this.form));
@@ -149,10 +151,10 @@ export default {
     formCounters() {
       this.form.room_num = this.form.rooms.length;
       this.form.rooms.forEach((element) => {
-        !element.Adults ? (element.Adults = 0) : element.Adults;
-        !element.Children ? (element.Children = 0) : element.Children;
-        this.form.adults_num += Number(element.Adults);
-        this.form.children_num += Number(element.Children);
+        !element.adults_number ? (element.adults_number = 0) : element.adults_number;
+        !element.children_number ? (element.children_number = 0) : element.children_number;
+        this.form.adults_num += Number(element.adults_number);
+        this.form.children_num += Number(element.children_number);
       });
       this.form.room_num = this.form.rooms.length;
     },
@@ -164,36 +166,36 @@ export default {
         // If Current value is greater than the previous value, add values to the array
         for (let i = this.form.rooms.length;i < value;i++) {
           this.form.rooms.push({
-            Adults: null,
-            Children: null,
-            ChildrenAges: [],
+            adults_number: null,
+            children_number: null,
+            children_ages: [],
           });
         }
       }
     },
     handleChangeCountOfKids(roomIndex, numberOfKids) {
-      let childrenAgesCount = this.form.rooms[roomIndex].ChildrenAges.length;
+      let childrenAgesCount = this.form.rooms[roomIndex].children_ages.length;
       if (numberOfKids > childrenAgesCount) {
         // if user add kid will add another input of null without adding nulls in all arrays
         let diff = numberOfKids - childrenAgesCount;
         for (let i = 0;i < diff;i++) {
-          this.form.rooms[roomIndex].ChildrenAges.push(null);
+          this.form.rooms[roomIndex].children_ages.push(null);
         }
       } else if (numberOfKids < childrenAgesCount) {
         // if user remove kid will remove input without adding nulls in all arrays
         let diff = childrenAgesCount - numberOfKids;
         for (let i = 0;i < diff;i++) {
-          this.form.rooms[roomIndex].ChildrenAges.pop();
+          this.form.rooms[roomIndex].children_ages.pop();
         }
       } else {
         // handle first input
         // fill the array with null values
-        this.form.rooms[roomIndex].ChildrenAges =
+        this.form.rooms[roomIndex].children_ages =
           Array(numberOfKids).fill(null);
       }
     },
     ...mapMutations("dateRangePicker", ["SET_DATE_RANGE"]),
-    ...mapActions("globalStore", ["fetchCountriesWithCodes"]),
+    //...mapActions("globalStore", ["fetchCountriesWithCodes"]),
     ...mapActions("hotels", ["fetchHotels"]),
 
     separateDates() {
@@ -236,8 +238,9 @@ export default {
     },
   },
   mounted() {
-    alert(1)
-    this.fetchCountriesWithCodes();
+
+    //this.fetchCountriesWithCodes();
+    this.fetchTopCities()
   },
   computed: {
     rules() {
