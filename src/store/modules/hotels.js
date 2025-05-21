@@ -1,4 +1,4 @@
-import axios from "@/plugins/axios";
+import axios , {AxiosSocket} from "@/plugins/axios";
 // initial state
 const state = {
   searchHotels: {},
@@ -93,7 +93,7 @@ const actions = {
   fetchHotels({ commit, dispatch, state }, filters) {
 
     commit("SET_AVAILABLE_HOTELS_LOADER", true);
-      
+
     const x = new WebSocket('wss://stg-py.happytbooking.com/api/v1/hotels/ws/search')
       
     commit("SET_CONNECTION",x);
@@ -123,6 +123,7 @@ const actions = {
           // خزّن البيانات في الستور
           commit("SET_CACHE_KEY" , response.data.cache_key)
           commit("SET_AVAILABLE_HOTELS", response);
+          localStorage.setItem('availbleHotels' , JSON.stringify(response))
           commit("SET_AVAILABLE_HOTELS_LOADER", false);
           commit("SET_ENABLE_FILTERS", true);
           state.connection.close()
@@ -262,8 +263,9 @@ const actions = {
   //     return res;
   //   });
   // },
-  fetchAvailbleHotelRooms({ commit, state }, { uuid, vervotech_id }) {
-    return axios.get(`/api/mapping/hotels/availableRooms/${uuid}/${vervotech_id}`).then((res) => {
+  fetchAvailbleHotelRooms({ commit, state }, { /* uuid, vervotech_id */ payload }) {
+    // stg-py.happytbooking.com/
+    return AxiosSocket.post(`/api/v1/rooms/hotel-details`, payload).then((res) => {
       console.log("res data of rooms", res.data);
       commit("SET_AVAILABLE_HOTELS_DETAILS", res.data);
       return res;

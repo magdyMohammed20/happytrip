@@ -140,13 +140,23 @@ export default {
           x: enCodeQuery,
         },
       });
-      this.uuid
-        ? this.fetchHotels(this.form)
-          .then(() => { })
-          .catch((e) => {
-            this.$toast.error(e);
-          })
-        : "";
+
+      localStorage.setItem('filters', false)
+      localStorage.setItem('filters', JSON.stringify(this.form))
+
+      this.fetchHotels(this.form)
+        .then(() => { })
+        .catch((e) => {
+          this.$toast.error(e);
+        })
+
+      /*  this.uuid
+         ? this.fetchHotels(this.form)
+           .then(() => { })
+           .catch((e) => {
+             this.$toast.error(e);
+           })
+         : ""; */
     },
     formCounters() {
       this.form.room_num = this.form.rooms.length;
