@@ -10,16 +10,10 @@
           <!-- filters -->
           <el-card class="w-50">
             <div class="bg-#5cf4eb flex justify-center p-2 w-[30%] rounded-xl">
-              <span
-                class="i-mdi-cancel text-white text-4xl text-slate-800"
-              ></span>
+              <span class="i-mdi-cancel text-white text-4xl text-slate-800"></span>
             </div>
             <p>Free Cancellation</p>
-            <el-switch
-              :disabled="roomsLoader"
-              size="large"
-              v-model="filters.freeCancellation"
-            ></el-switch>
+            <el-switch :disabled="roomsLoader" size="large" v-model="filters.freeCancellation"></el-switch>
           </el-card>
           <el-card class="mx-3 w-50">
             <div class="bg-#ff0097 flex justify-center w-[28%] p-3 rounded-xl">
@@ -27,11 +21,7 @@
               <!-- <span class="i-mdi-food text-white text-2xl p-2 text-slate-800"></span> -->
             </div>
             <p>With Breakfast</p>
-            <el-switch
-              :disabled="roomsLoader"
-              size="large"
-              v-model="filters.breakfast"
-            ></el-switch>
+            <el-switch :disabled="roomsLoader" size="large" v-model="filters.breakfast"></el-switch>
           </el-card>
         </div>
       </div>
@@ -42,42 +32,24 @@
   <el-col class="mt-6" v-if="roomsLoader">
     <loading-card></loading-card>
   </el-col>
-  <el-col
-    v-else-if="computedRooms != 0"
-    class="my-5 card-border custom-border"
-    v-for="(room, roomIndex) in rooms"
-    :key="room"
-  >
+  <el-col v-else-if="computedRooms != 0" class="my-5 card-border custom-border" v-for="(room, roomIndex) in rooms"
+    :key="room">
     <div class="sm:block border-1 border-slate-200 main-card">
-      <div
-        class="py-3 border-1 border-slate-200 top-radius bg-slate-50 sm:w-full flex flex-col"
-      >
+      <div class="py-3 border-1 border-slate-200 top-radius bg-slate-50 sm:w-full flex flex-col">
         <div class>
-          <div
-            class="custom-border text-4 font-bold text-gray-500 px-3 top-radius border-slate-300"
-          >
+          <div class="custom-border text-4 font-bold text-gray-500 px-3 top-radius border-slate-300">
             {{ room.name }}
           </div>
           <div class="flex w-[30%]">
-            <div
-              class="px-4"
-              v-for="roomDetail in availbleHotelsDetails.hotel.paxes"
-              :key="roomDetail"
-            >
-              <img
-                :src="availbleHotelsDetails.hotel.min_image"
-                class="w-[45%] mt-2 rounded-xl"
-              />
+            <div class="px-4" v-for="roomDetail in availbleHotelsDetails.hotel.paxes" :key="roomDetail">
+              <img :src="availbleHotelsDetails.hotel.min_image" class="w-[45%] mt-2 rounded-xl" />
 
               <p class="text-sm text-slate-400 py-0 my-0">
                 Adults : {{ roomDetail.Adults }}
                 <span>Kids : {{ roomDetail.Children }}</span>
               </p>
-              <span
-                class="text-xs text-slate-400 py-0 my-0"
-                v-for="(age, index) in roomDetail.ChildrenAges"
-                >Kid {{ index + 1 }} : {{ age }} years</span
-              >
+              <span class="text-xs text-slate-400 py-0 my-0" v-for="(age, index) in roomDetail.ChildrenAges">Kid {{
+                index + 1 }} : {{ age }} years</span>
             </div>
           </div>
         </div>
@@ -87,10 +59,7 @@
         <div class="flex w-[35%] m-5 self-center">
           <div class>
             <div class="flex justify-center">
-              <img
-                :src="availbleHotelsDetails.hotel.min_image"
-                class="w-[100%] rounded-xl"
-              />
+              <img :src="availbleHotelsDetails.hotel.min_image" class="w-[100%] rounded-xl" />
             </div>
             <!-- <div>
               <p
@@ -133,73 +102,52 @@
             class="flex flex-col bg-white sm:flex-row sm:flex-wrap remove-top-border justify-between border-solid border-1 border-slate-300"
             v-for="rate in room.rates[0].open
               ? room.rates
-              : room.rates.slice(0, 2)"
-            :key="rate"
-          >
+              : room.rates.slice(0, 2)" :key="rate">
 
             <div class="px-8">
               <p class="subheader font-light text-xl">Whats Included</p>
               <!-- <p class="text-sm custom-extra-bold text-#5808D8">{{ rate.boardName }}</p> -->
 
               <ul class="ml-0 pl-0" v-if="rate.cancellationPolicies">
-                <li
-                  class="font-light m-0 p-0 list-style text-black py-1"
-                  v-if="isFreeToCancel(rate.cancellationPolicies)"
-                >
-                  <p
-                    v-if="isFreeToCancel(rate.cancellationPolicies)"
-                    class="text-xs p-0 m-0 text-green-400 lg:md:block sm:inline break-all"
-                  >
-                    <span
-                      class="i-mdi-circle-small text-3xl text-green-500"
-                    ></span>
+                <li class="font-light m-0 p-0 list-style text-black py-1"
+                  v-if="isFreeToCancel(rate.cancellationPolicies)">
+                  <p v-if="isFreeToCancel(rate.cancellationPolicies)"
+                    class="text-xs p-0 m-0 text-green-400 lg:md:block sm:inline break-all">
+                    <span class="i-mdi-circle-small text-3xl text-green-500"></span>
 
                     <span class="font-semibold">Free Cancellation before:</span>
                   </p>
-                  <p
-                    v-if="isFreeToCancel(rate.cancellationPolicies)"
-                    class="text-xs pl-7 m-0 text-green-400 lg:md:block sm:inline break-all"
-                  >
+                  <p v-if="isFreeToCancel(rate.cancellationPolicies)"
+                    class="text-xs pl-7 m-0 text-green-400 lg:md:block sm:inline break-all">
                     {{ cancelationDate(rate) }}
-                    <span
-                      class="inline custom-icon"
-                      @click="
-                        SET_CANCELLATION_DIALOG(true);
-                        SET_CANCELLATION_DIALOG_DATA(rate);
-                      "
-                    >
-                      <span
-                        class="i-mdi-exclamation text-sm border-rounded-xl text-blue-500"
-                      ></span>
+                    <span class="inline custom-icon" @click="
+                      SET_CANCELLATION_DIALOG(true);
+                    SET_CANCELLATION_DIALOG_DATA(rate);
+                    ">
+                      <span class="i-mdi-exclamation text-sm border-rounded-xl text-blue-500"></span>
                     </span>
                   </p>
                 </li>
-                <li
-                  class="font-bold m-0 p-0 list-style text-red-500 py-1"
-                  v-else
-                >
+                <li class="font-bold m-0 p-0 list-style text-red-500 py-1" v-else>
                   <span class="i-mdi-circle-small text-3xl text-red-500"></span>
                   Non Refundable
                 </li>
                 <li class="font-bold list-style py-1 text-#5808D8">
-                  <span
-                    class="i-mdi-circle-small text-3xl text-green-500"
-                  ></span>
+                  <span class="i-mdi-circle-small text-3xl text-green-500"></span>
                   {{ rate.boardName }}
                 </li>
               </ul>
               <div class="w-full">
-                  <p class="text-red-500 font-bold">
-                    {{ rate.promotion[0] }}
-                  </p>
-                </div>
-                <!-- <hr class=""> -->
-                <div class="text-slate-500">{{ rate.inclusion  }}</div>
+                <p class="text-red-500 font-bold">
+                  {{ rate.promotion[0] }}
+                </p>
+              </div>
+              <!-- <hr class=""> -->
+              <div class="text-slate-500">{{ rate.inclusion }}</div>
             </div>
 
             <div
-              class="px-5 flex lg:md:flex-col sm:flex-row sm:justify-between lg:md:justify-start lg:md:w-fit sm:w-full"
-            >
+              class="px-5 flex lg:md:flex-col sm:flex-row sm:justify-between lg:md:justify-start lg:md:w-fit sm:w-full">
               <p class="subheader text-center pb-0 mb-0 font-light text-xl">
                 Capacity
               </p>
@@ -212,45 +160,35 @@
               <p class="subheader font-light lg:md:text-xl sm:text-4 font-bold">
                 Total For Stay
               </p>
-              <p
-                class="text-xl py-0 my-0 custom-extra-bold text-#FF1E74 lg:md:block sm:inline"
-              >
+              <p class="text-xl py-0 my-0 custom-extra-bold text-#FF1E74 lg:md:block sm:inline">
                 {{ getCurrencyType }}
                 {{ Math.round(rate.net) }}
               </p>
-              <p
-                class="subheader font-light pt-0 mt-0 text-slate-500 text-xs lg:md:block"
-              >
+              <p class="subheader font-light pt-0 mt-0 text-slate-500 text-xs lg:md:block">
                 total For {{ getDiffrencetotalDays }} Days
               </p>
             </div>
-            <div
-              class="lg:md:w-fit sm:w-full flex flex-col justify-between text-center py-2 mt-5"
-            >
+            <div class="lg:md:w-fit sm:w-full flex flex-col justify-between text-center py-2 mt-5">
               <div>
                 <el-button
                   class="flex-grow-1 text-white font-bold bg-#1CCF3D text-center py-5 px-8 custom-border book-btn hover:bg-violet-100 ease-in-out duration-300"
-                  @click="goToPayment(rate)"
-                >
+                  @click="goToPayment(rate)">
                   Book for
                   {{ availbleHotelsDetails.roomCount }} Room
                 </el-button>
-                
+
               </div>
             </div>
           </div>
-          
-          <div
-            @click="displayedItems(room)"
-            v-if="room.rates.length > 2"
-            class="button hover:bg-violet-100 ease-in-out duration-300 font-bold text-purple-800 text-xs bg-violet-100 p-3 text-center cursor-pointer lg:md:block sm:hidden"
-          >
+
+          <div @click="displayedItems(room)" v-if="room.rates.length > 2"
+            class="button hover:bg-violet-100 ease-in-out duration-300 font-bold text-purple-800 text-xs bg-violet-100 p-3 text-center cursor-pointer lg:md:block sm:hidden">
             {{ room.rates[0].open ? "Show less" : "Show more" }}
           </div>
         </div>
-        
+
       </div>
-      
+
     </div>
   </el-col>
 
@@ -304,9 +242,9 @@ export default {
       return Math.ceil(
         Math.abs(
           new Date(this.availbleHotelsDetails.checkIn) -
-            new Date(this.availbleHotelsDetails.checkOut)
+          new Date(this.availbleHotelsDetails.checkOut)
         ) /
-          (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24)
       );
     },
     getCurrencyType() {
@@ -339,7 +277,7 @@ export default {
       "SET_CANCELLATION_DIALOG_DATA",
     ]),
     ...mapMutations("hotels", ["SET_AVAILABLE_HOTELS_DETAILS"]),
-    items(rate) {},
+    items(rate) { },
     displayedItems(room) {
       // this.showAllRooms = room.rates[0].open;
       room.rates[0].open = !room.rates[0].open;
@@ -513,10 +451,12 @@ export default {
   padding: 2px 1px;
   margin: 5px;
 }
+
 //
-.custom-icon > span {
+.custom-icon>span {
   margin: 3px;
 }
+
 .top-radius {
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;

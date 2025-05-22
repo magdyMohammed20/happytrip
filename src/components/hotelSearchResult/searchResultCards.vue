@@ -25,7 +25,7 @@
               <span class="i-mdi-location text-3xl h-5 text-purple-800"></span>
               <span class="text-xs text-slate-500">{{
                 card.address
-              }}</span>
+                }}</span>
               <div>
                 <el-rate v-model="card.rating" size="large" disabled text-color="#ff9900" />
               </div>

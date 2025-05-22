@@ -30,6 +30,7 @@
         </p>
       </div>-->
     </el-col>
+
     <el-col v-if="roomsLoader" :span="24" :lg="24" class="lg:flex sm:hidden">
       <div class="w-full h-[200px]">
         <loading-card class="h-[100vh]"></loading-card>
@@ -37,7 +38,9 @@
 
     </el-col>
     <el-col v-else :span="24" :lg="24" class="lg:flex h-[500px] cursor-pointer hover:opacity-80"
-      @click="showGallery = true">
+      @click="showGallery = false">
+
+
       <!--
          <el-carousel indicator-position="outside" class="w-full h-full bg-carsoul hotel-carsoul">
               <el-carousel-item v-for="image in imagesUrls" :key="image">
@@ -50,24 +53,28 @@
         <!-- <pre>
         {{ availbleHotelsDetails.data }}
        </pre> -->
-        <el-col :lg="12" class="h-full w-full">
+        <!--  <el-col :lg="12" class="h-full w-full">
           <el-row class="h-full w-full">
+
             <el-col :lg="12" class="lg:h-[50%]" v-for="(img, index) in hotelImages?.slice(0, 4)" :key="index">
+
               <img :src="img.Links[0].ProviderHref" class="object-cover w-full h-full" />
             </el-col>
           </el-row>
-        </el-col>
-        <el-col :lg="12" class="h-full w-full">
-          <el-row class="h-full w-full">
-            <el-col :lg="index == 0 ? 24 : 8" class="lg:h-[50%]" v-for="(img, index) in hotelImages?.slice(4, 7)"
+        </el-col> -->
+        <el-col :lg="48" class="h-full w-full">
+          <!--  <el-row class="h-full w-full"> -->
+          <!--    <el-col :lg="index == 0 ? 24 : 8" class="lg:h-[50%]" v-for="(img, index) in hotelImages?.slice(4, 7)"
               :key="index">
               <img :src="img.Links[0].ProviderHref" class="object-cover w-full h-full" />
-            </el-col>
-            <el-col :lg="8" class="lg:h-[50%]">
+            </el-col> -->
 
-              <img src="../assets/images/mapImage.png" class="object-cover w-full h-full" />
-            </el-col>
-          </el-row>
+          <img :src="availbleHotelsDetails?.data?.hotel?.thumbnail" class="object-cover w-full h-full" />
+
+          <!--  <el-col :lg="12" class="lg:h-[100%]">
+
+          </el-col> -->
+          <!-- </el-row> -->
         </el-col>
 
 
@@ -77,14 +84,19 @@
       </pre> -->
 
     </el-col>
+
+
+    <!-- ✅ -->
     <header-room-details-card></header-room-details-card>
   </el-row>
   <el-row class="lg:px-40 sm:px-5">
 
+    <!-- ✅ -->
     <room-choices-cards></room-choices-cards>
   </el-row>
 
   <el-row class="lg:px-40 lg:my-20 sm:px-10 py-15 bg-slate-200">
+    <!-- ✅ -->
     <about-hotel></about-hotel>
 
   </el-row>
@@ -135,13 +147,13 @@ export default {
   mounted() {
     this.SET_ROOM_LOADING(true);
 
-    console.log('1111111111', this.filterSelected)
+    //console.log('1111111111', this.filterSelected)
 
 
     const filtersData = JSON.parse(localStorage.getItem('filters'))
 
     const { id, vendor } = this.filterSelected
-    console.log('23445', this.filterSelected.target)
+    //console.log('23445', this.filterSelected.target)
     /*    const payload = {
          provider_hotel_id: JSON.stringify(id),
          vervotech_id: this.$route.params.vervotech_id,
@@ -172,7 +184,6 @@ export default {
       ],
     }
 
-    console.log('2222222222', payload)
 
     this.fetchAvailbleHotelRooms({
       payload
@@ -189,7 +200,7 @@ export default {
   computed: {
     ...mapState("hotels", ["availbleHotelsDetails", "roomsLoader", "availbleHotels"]),
     hotelImages() {
-      console.log(this.availbleHotelsDetails.hotel)
+      //console.log('5555555', this.availbleHotelsDetails)
       return (this.availbleHotelsDetails.hotel
         ? convertStringValuesToObjects(this.availbleHotelsDetails.hotel).images
         : []);
@@ -203,7 +214,7 @@ export default {
 
       //alert(JSON.stringify(this.availbleHotels) == {})
       //console.log('111123', JSON.parse(this.availbleHotels))
-      console.log('111123', this.availbleHotels?.data)
+      //console.log('111123', this.availbleHotels?.data)
       const obj = this.availbleHotels?.data ?
         this.availbleHotels.data.hotels.filter(item => item.vervotech_id == this.$route.params.vervotech_id) :
         parsedAvailableHotels.data.hotels.filter(item => item.vervotech_id == this.$route.params.vervotech_id)

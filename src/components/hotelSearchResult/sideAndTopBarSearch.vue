@@ -10,22 +10,45 @@
             <p class="mt-0 mb-0 font-thin">SEARCH SUMMERY</p>
             <P class="font-bold mb-0 mt-0" v-if="!hotelsLoader">{{ availbleHotels.destination }}</P>
             <div class="flex align-center" v-if="!hotelsLoader">
-              <span class="text-xs font-bold mt-0 mb-0 text-slate-500">from :{{ availbleHotels.checkIn }} </span>
+
+              <span class="text-xs font-bold mt-0 mb-0 text-slate-500">from :{{ availbleHotels.checkIn ?
+                availbleHotels.checkIn : availbleHotels.data.hotel_search.check_in }} </span>
               <!-- music-note-whole -->
 
               <span class="text-xs font-bold mt-0 px-1 text-slate-500 flex align-center">
                 <span class="i-mdi-music-note-whole text-red text-sm"></span>
-                to:{{ availbleHotels.checkOut }}
+                to:{{ availbleHotels.checkOut ? availbleHotels.checkOut : availbleHotels.data.hotel_search.check_out }}
               </span>
+
+
+              <!-- <span class="text-xs font-bold pl-5 mt-0 mb-0 text-slate-500">
+                {{ availbleHotels.adults ? availbleHotels.adults : availbleHotels.data.hotel_search.content.adults_num
+                }} Adult &
+                {{ availbleHotels.children ? availbleHotels.children :
+                  availbleHotels.data.hotel_search.content.children_num }} Kid
+              </span> -->
+
+              <!--   <pre>
+                {{ availbleHotels.data.hotel_search }}
+              </pre> -->
               <span class="text-xs font-bold pl-5 mt-0 mb-0 text-slate-500">
-                {{ availbleHotels.adults }} Adult &
-                {{ availbleHotels.children }} Kid
+                {{ availbleHotels.data.hotel_search.content.adults_num
+                }} Adult <!-- {{
+                  availbleHotels.data.hotel_search.content.kids_nums }} -->
+
+                {{ kids_nums }} Kid
               </span>
+
+
               <!-- music-note-whole -->
 
               <span class="text-xs font-bold mt-0 px-1 text-slate-500 flex align-center">
                 <span class="i-mdi-music-note-whole text-sm text-red"></span>
-                {{ availbleHotels.roomCount }} Room
+                <!-- {{ availbleHotels.roomCount ? availbleHotels.roomCount :
+                rooms_nums }}  -->
+                {{
+                  rooms_nums }}
+                Room
               </span>
             </div>
           </div>
@@ -240,6 +263,8 @@ import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   data() {
     return {
+      kids_nums: null,
+      rooms_nums: null,
       fullscreenLoading: false,
       disableSort: true,
       userInput: "",
@@ -267,6 +292,25 @@ export default {
         price: [0, 500000]
       }
     };
+  },
+  mounted() {
+    const params = new URLSearchParams(window.location.search);
+    const encodedX = params.get('x');
+
+    if (encodedX) {
+      try {
+        const decodedX = decodeURIComponent(decodeURIComponent(encodedX));
+        const parsedX = JSON.parse(decodedX);
+        const roomNum = parsedX.room_num;
+        const kids = parsedX.children_num;
+
+
+        this.rooms_nums = roomNum
+        this.kids_nums = kids
+      } catch (error) {
+        console.error('Failed to parse x:', error);
+      }
+    }
   },
   methods: {
     onSearch(attr) {

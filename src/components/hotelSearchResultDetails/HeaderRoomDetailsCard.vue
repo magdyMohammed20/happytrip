@@ -3,19 +3,17 @@
   <!--  TODO  fullHotelDetails is nedd to send another request to fire  -->
   <!-- header card  -->
 
-  <el-col
-    v-if="!availbleHotelsDetails.hotel"
-    class="relative lg:md:bottom-10 sm:bottom-0 lg:px-40 md:px-20 sm:px-5"
-  >
+  <el-col v-if="!availbleHotelsDetails?.data?.hotel"
+    class="relative lg:md:bottom-10 sm:bottom-0 lg:px-40 md:px-20 sm:px-5">
+    <!-- 45{{ JSON.stringify(!availbleHotelsDetails?.data?.hotel) }} -->
+
+
   </el-col>
-  <el-col
-    v-else
-    class="relative lg:md:bottom-10 sm:bottom-0 lg:px-40 md:px-20 sm:px-5"
-  >
+  <el-col v-if="availbleHotelsDetails?.data?.hotel"
+    class="relative lg:md:bottom-10 sm:bottom-0 lg:px-40 md:px-20 sm:px-5">
+
     <!-- header card  -->
-    <div
-      class="lg:md:flex bg-white drop-shadow-md lg:p-20 sm:p-5 main-card custom-border"
-    >
+    <div class="lg:md:flex bg-white drop-shadow-md lg:p-20 sm:p-5 main-card custom-border">
       <div class="lg:md:left-card">
         <div>
           <!-- <el-carousel :interval="4000" type="card" height="100px">
@@ -24,27 +22,23 @@
                             </el-carousel-item>
           </el-carousel>-->
           <h3 class="font-extrabold" @click="log">Hotel Details</h3>
-          <el-rate
-            v-model="availbleHotelsDetails.hotel.rating"
-            disabled
-            size="large"
-            text-color="#ff9900"
-          />
+
+          <!--v-model="availbleHotelsDetails?.hotel?.rating"-->
+
+          <el-rate v-model="availbleHotelsDetails.data.hotel.rating" disabled size="large" text-color="#ff9900" />
           <!-- <p class="small-purble-text inline">( Write Review )</p> -->
         </div>
-        <h3 class="font-extrabold">{{ availbleHotelsDetails.hotel.name }}</h3>
-        <span
-          class="i-mdi-map-marker-radius-outline text-3xl text-violet-600"
-        ></span>
+        <h3 class="font-extrabold">{{ availbleHotelsDetails?.data?.hotel?.name }}</h3>
+        <span class="i-mdi-map-marker-radius-outline text-3xl text-violet-600"></span>
+
+
         <p class="subheader inline px-3">
-          {{ availbleHotelsDetails.hotel.addressLine1 }}
+          <!-- {{ availbleHotelsDetails.hotel.addressLine1 }} -->
+          {{ availbleHotelsDetails?.data?.hotel?.address }}
         </p>
         <div class="py-5">
-          <p
-            class="text-slate-500 my-1 text-sm w-[100%]"
-            v-for="paragraph in paragraphs"
-          >
-             {{ paragraph }}
+          <p class="text-slate-500 my-1 text-sm w-[100%]" v-for="paragraph in paragraphs">
+            {{ paragraph }}
           </p>
         </div>
       </div>
@@ -97,20 +91,19 @@
                                     <el-dropdown-item>3 Room and 3 Guest</el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
-                        </el-dropdown>
+</el-dropdown>
 
-                        <el-dropdown trigger="hover"
-                            class="mb-6 p-3 border-solid w-10/12  border-2 border-slate-200 custom-border">
-                            <div class="el-dropdown-link ">
-                                <span class="i-mdi-bed-double-outline text-slate-400"></span>
+<el-dropdown trigger="hover" class="mb-6 p-3 border-solid w-10/12  border-2 border-slate-200 custom-border">
+  <div class="el-dropdown-link ">
+    <span class="i-mdi-bed-double-outline text-slate-400"></span>
 
-                                <p class="subheader inline px-5 text-slate-400">
-                                    1 Standarad Double or Twin
-                                </p>
-                                <span class="i-mdi-arrow-down-drop-circle-outline text-slate-400"></span>
+    <p class="subheader inline px-5 text-slate-400">
+      1 Standarad Double or Twin
+    </p>
+    <span class="i-mdi-arrow-down-drop-circle-outline text-slate-400"></span>
 
-                            </div>
-                            <template #dropdown>
+  </div>
+  <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item>1 Standarad Double</el-dropdown-item>
                                     <el-dropdown-item>
@@ -118,47 +111,37 @@
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
-                        </el-dropdown>
+</el-dropdown>
 
-                        <div class="w-11/12">
-                            <el-button @click="dialogVisible = true"
-                                class="flex-grow-1 w-full text-white font-bold bg-#1CCF3D text-center py-5 custom-border  hover:bg-violet-700 ease-in-out duration-300">
-                                Book Now
-                            </el-button>
-                        </div>
-                    </div>
+<div class="w-11/12">
+  <el-button @click="dialogVisible = true"
+    class="flex-grow-1 w-full text-white font-bold bg-#1CCF3D text-center py-5 custom-border  hover:bg-violet-700 ease-in-out duration-300">
+    Book Now
+  </el-button>
+</div>
+</div>
 
-        </div>-->
+</div>-->
       <!-- </div> -->
     </div>
   </el-col>
+
+
   <el-dialog v-model="dialogVisible" class="dialog-sold-out" width="20%">
     <div class="text-center">
       <span class="i-mdi-home text-5xl text-rose-400"></span>
       <p class="text-rose-400 p-0 m-0">Sold Out</p>
 
       <h3 class="font-extrabold">Citymax Hotel Bur Dubai</h3>
-      <span
-        class="i-mdi-map-marker-radius-outline text-3xl text-violet-800"
-      ></span>
-      <span class="text-xs px-3 text-slate-500"
-        >Jumeirah P.O. Box 75157 , UAE</span
-      >
+      <span class="i-mdi-map-marker-radius-outline text-3xl text-violet-800"></span>
+      <span class="text-xs px-3 text-slate-500">Jumeirah P.O. Box 75157 , UAE</span>
       <div>
-        <el-rate
-          class="p-1 py-2"
-          v-model="value"
-          size="large"
-          disabled
-          text-color="#ff9900"
-        />
+        <el-rate class="p-1 py-2" v-model="value" size="large" disabled text-color="#ff9900" />
       </div>
 
-      <el-button
-        @click="dialogVisible = true"
-        class="flex-grow-1 w-full text-white font-bold bg-#1CCF3D text-center py-5 custom-border hover:bg-violet-700 ease-in-out duration-300"
-        >Try Other Hotel</el-button
-      >
+      <el-button @click="dialogVisible = true"
+        class="flex-grow-1 w-full text-white font-bold bg-#1CCF3D text-center py-5 custom-border hover:bg-violet-700 ease-in-out duration-300">Try
+        Other Hotel</el-button>
     </div>
   </el-dialog>
   <!--end of header card -->
@@ -185,7 +168,7 @@ export default {
     ]),
     paragraphs() {
       // Split the text into paragraphs based on line breaks or other criteria
-      return this.availbleHotelsDetails.hotel?.descriptions[0].Text.split("."); // Example: Split by line breaks
+      //return this.availbleHotelsDetails?.data?.hotel?.descriptions[0].Text.split("."); // Example: Split by line breaks
     },
   },
   mounted() {
@@ -227,7 +210,7 @@ export default {
   width: 87%;
 }
 
-.inputs > .el-date-editor.el-input__wrapper {
+.inputs>.el-date-editor.el-input__wrapper {
   width: 90% !important;
 }
 
@@ -236,7 +219,7 @@ export default {
   margin: auto;
 }
 
-.main-card > .left-card {
+.main-card>.left-card {
   width: 60%;
   border-right: #dbdbdb 2px dashed;
 }
@@ -253,7 +236,7 @@ export default {
   width: 79% !important;
 }
 
-.dialog-sold-out > .el-dialog__body {
+.dialog-sold-out>.el-dialog__body {
   text-align: center !important;
 }
 
