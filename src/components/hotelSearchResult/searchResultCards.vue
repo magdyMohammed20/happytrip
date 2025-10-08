@@ -7,9 +7,13 @@
 
     <div>
       <p class="font-bold pt-5 mt-1 text-basic px-1">
-        {{ availbleHotels?.data?.pagination.total }} Hotel Search Result
+
+        {{ availbleHotels?.data?.pagination?.total ? availbleHotels?.data?.pagination?.total :
+          availbleHotels.data?.hotels?.length }} Hotel Search Result
       </p>
     </div>
+
+
 
     <div v-if="!!availbleHotels" v-for="(card, index) in availbleHotels?.data?.hotels" :key="card.id">
 
@@ -109,9 +113,9 @@
       </router-link>
     </div>
 
-    <el-pagination v-model:current-page="currentPage" @update:current-page="handleChangePage" background
+    <!--   <el-pagination v-model:current-page="currentPage" @update:current-page="handleChangePage" background
       layout="prev, pager, next" class="my-3 justify-center" :total="this.availbleHotels.hotelsCount"
-      v-if="availbleHotels.hotelsCount" />
+      v-if="availbleHotels.hotelsCount" /> -->
   </el-col>
 </template>
 <script>

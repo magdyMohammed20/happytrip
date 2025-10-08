@@ -7,17 +7,19 @@
             <span class="i-mdi-building pt-5 text-4xl text-white"></span>
           </div>
           <div class="inline px-3">
+
             <p class="mt-0 mb-0 font-thin">SEARCH SUMMERY</p>
             <P class="font-bold mb-0 mt-0" v-if="!hotelsLoader">{{ availbleHotels.destination }}</P>
             <div class="flex align-center" v-if="!hotelsLoader">
 
-              <span class="text-xs font-bold mt-0 mb-0 text-slate-500">from :{{ availbleHotels.checkIn ?
-                availbleHotels.checkIn : availbleHotels.data.hotel_search.check_in }} </span>
+              <span class="text-xs font-bold mt-0 mb-0 text-slate-500">from :{{ availbleHotels?.checkIn ?
+                availbleHotels?.checkIn : availbleHotels.data.hotel_search?.check_in }} </span>
               <!-- music-note-whole -->
 
               <span class="text-xs font-bold mt-0 px-1 text-slate-500 flex align-center">
                 <span class="i-mdi-music-note-whole text-red text-sm"></span>
-                to:{{ availbleHotels.checkOut ? availbleHotels.checkOut : availbleHotels.data.hotel_search.check_out }}
+                to:{{ availbleHotels?.checkOut ? availbleHotels?.checkOut : availbleHotels.data.hotel_search?.check_out
+                }}
               </span>
 
 
@@ -32,7 +34,7 @@
                 {{ availbleHotels.data.hotel_search }}
               </pre> -->
               <span class="text-xs font-bold pl-5 mt-0 mb-0 text-slate-500">
-                {{ availbleHotels.data.hotel_search.content.adults_num
+                {{ availbleHotels?.data.hotel_search?.content.adults_num
                 }} Adult <!-- {{
                   availbleHotels.data.hotel_search.content.kids_nums }} -->
 
@@ -90,8 +92,8 @@
             onSearch();
             ">(Clear this filter)</span>
           </p>
-          <el-input v-model="filters.hotel_name" placeholder="Search" :disabled="!enableFilters" @input="onSearch()"
-            class="borderBotOnly" />
+          <el-input v-model="filters.hotel_name" placeholder="Search" :disabled="!enableFilters"
+            @input="onSearch('name')" class="borderBotOnly" />
         </div>
         <div></div>
 
@@ -100,13 +102,19 @@
             Search by Price
             <span class="text-blue font-light text-xs cursor-pointer" @click="clearPrices()">(Clear this filter)</span>
           </p>
-          <div>
-            {{ availbleHotels.maxPrice ? formatePriceRange(filters.price) : '' }}
-            <el-slider v-if="availbleHotels.maxPrice" :disabled="!enableFilters" show-input @change="
-              formatePriceRange(filters.price);
-            onSearch();
-            " v-model="filters.price" :min="(Number(availbleHotels.minPrice))" :max="(Number(availbleHotels.maxPrice))"
+          <div v-if="availbleHotels?.data">
+
+
+
+            {{
+              availbleHotels?.data?.max_price ? formatePriceRange(filters.price) : '' }}
+            <el-slider v-if="availbleHotels?.data?.max_price" :disabled="!enableFilters" show-input
+              @change=" formatePriceRange(filters.price); onSearch('price_range')" v-model="filters.price"
+              :min="storageHotels.data.min_price ? Number(storageHotels.data.min_price) : (Number(availbleHotels?.data?.min_price))"
+              :max="storageHotels.data.max_price ? Number(storageHotels.data.max_price) : (Number(availbleHotels?.data?.max_price))"
               range class />
+
+
             <div class="flex justify-between">
               <p class="inline text-xs text-slate-400">{{ first }}</p>
               <p class="inline text-xs text-slate-400">{{ last }}</p>
@@ -115,20 +123,28 @@
 
         </div>
 
-        <div class="slider-demo-block w-70 mx-auto py-5">
+
+
+
+        <div class="slider-demo-block  mx-auto py-5">
           <p class="font-bold text-md">
             Search Rating
-            <span class="text-blue font-light text-xs cursor-pointer" @click="
+            <!-- <span class="text-blue font-light text-xs cursor-pointer" @click="
               filters.rating = [];
             onSearch();
-            ">(Clear this filter)</span>
+            ">(Clear this filter)</span> -->
           </p>
-          <div v-if="availbleHotels.rates">
-            <div v-for="(rate, index) in availbleHotels.rates.length" :key="rate" class="py-2">
-              <el-checkbox @change="onSearch()" v-model="filters.rating" :name="rate"
-                :label="availbleHotels.rates[index].rate" class="check-box-color inline pt-0 mt-0" size="large" />
+
+
+
+          <div v-if="availbleHotels?.data?.rates">
+
+            <div v-for="(rate, index) in availbleHotels.data.rates.length" :key="rate" class="py-2">
+              <el-checkbox @change="onSearch('rating')" v-model="filters.rating" :name="rate"
+                :label="availbleHotels?.data?.rates[index]?.rate" class="check-box-color inline pt-0 mt-0"
+                size="large" />
               <p class="inline px-1"> Star</p>
-              <p class="inline text-slate text-3">({{ availbleHotels.rates[index].rateCount }} Hotels)</p>
+              <p class="inline text-slate text-3">({{ availbleHotels?.data?.rates[index]?.rateCount }} Hotels)</p>
             </div>
           </div>
 
@@ -316,10 +332,22 @@ export default {
     onSearch(attr) {
 
       //this.SET_AVAILABLE_HOTELS_LOADER(true);
+      console.log("attr", attr);
+      console.log(this.availbleHotels)
+      console.log(this.hotels)
 
       if (attr) {
+        if (attr == 'name') {
+          this.filters = {
+            ...this.filters,
+            hotel_name: this.filters.hotel_name,
+            rating: this.filters.rating ? this.filters.rating : [],
+            min: this.filters?.price.length != 0 ? this.filters.price[0] : 0,
+            max: this.filters?.price.length > 1 ? this.filters.price[1] : 500000
+          }
 
-        if (attr == 'price') {
+        }
+        else if (attr == 'price') {
           this.filters = {
             ...this.filters,
             hotel_name: this.filters.hotel_name,
@@ -331,21 +359,49 @@ export default {
             hotel_name: this.filters.hotel_name,
             sort_by_rating: 'asc'
           }
+        } else if (attr == 'price_range') {
+
+          this.filters = {
+            ...this.filters,
+            min: this.filters.price[0],
+            max: this.filters.price[1]
+          }
+          /* this.filters.price_range = {
+            min: this.filters.price[0],
+            max: this.filters.price[1],
+          }; */
+
+
         } else {
           this.filters = {
             ...this.filters,
-            hotel_name: this.filters.hotel_name
+            rating: this.filters.rating,
+            min: this.filters.price[0],
+            max: this.filters.price[1]
           }
         }
 
 
       }
 
-
-      this.fetchFilteredHotels(this.filters)
+      // Sanitize
+      const { max_price, min_price, price, ...sanFilters } = this.filters
+      console.log("this.filters Before Send", sanFilters);
+      console.log("avail", this.availbleHotels);
+      //console.log("this.filters", this.filters);
+      this.fetchFilteredHotels(sanFilters)
         .finally(() => {
           //this.SET_AVAILABLE_HOTELS_LOADER(false);
         });
+
+
+
+
+
+
+
+
+
 
       /* this.fetchFilteredHotels(this.filters).finally(() => {
         this.SET_AVAILABLE_HOTELS_LOADER(false);
@@ -386,11 +442,12 @@ export default {
     },
 
     formatePriceRange(value) {
-      if (this.availbleHotels.maxPrice) {
-        this.first = value[0] + " " + "SAR";
-        this.last = value[1] + " " + "SAR";
+      if (this.availbleHotels?.data?.max_price && Array.isArray(value)) {
+        this.first = value[0] + " SAR";
+        this.last = value[1] + " SAR";
       }
     },
+
     ...mapActions("hotels", ["fetchAvailbleHotel"]),
     ...mapActions("hotels", ["fetchFilteredHotels"]),
     handleChange: val => {
@@ -412,6 +469,14 @@ export default {
         return count;
       } else {
         return [];
+      }
+    },
+    storageHotels() {
+      let storage = localStorage.getItem("availbleHotels");
+      if (storage) {
+        return JSON.parse(storage);
+      } else {
+        return null;
       }
     }
   },

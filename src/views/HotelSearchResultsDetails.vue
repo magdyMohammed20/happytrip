@@ -184,7 +184,6 @@ export default {
       ],
     }
 
-
     this.fetchAvailbleHotelRooms({
       payload
       /* uuid: this.$route.params.uuid, */

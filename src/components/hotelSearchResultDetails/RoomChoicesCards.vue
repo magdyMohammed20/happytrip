@@ -32,21 +32,24 @@
   <el-col class="mt-6" v-if="roomsLoader">
     <loading-card></loading-card>
   </el-col>
-  <el-col v-else-if="computedRooms != 0" class="my-5 card-border custom-border" v-for="(room, roomIndex) in rooms"
-    :key="room">
+
+
+  <el-col v-else-if="computedRooms.length != 0" class="my-5 card-border custom-border"
+    v-for="(room, roomIndex) in computedRooms" :key="room">
     <div class="sm:block border-1 border-slate-200 main-card">
       <div class="py-3 border-1 border-slate-200 top-radius bg-slate-50 sm:w-full flex flex-col">
         <div class>
           <div class="custom-border text-4 font-bold text-gray-500 px-3 top-radius border-slate-300">
             {{ room.name }}
+
           </div>
-          <div class="flex w-[30%]">
-            <div class="px-4" v-for="roomDetail in availbleHotelsDetails.hotel.paxes" :key="roomDetail">
-              <img :src="availbleHotelsDetails.hotel.min_image" class="w-[45%] mt-2 rounded-xl" />
+          <div class="flex w-[80%]">
+            <div class="px-4" v-for="roomDetail in availbleHotelsDetails.data.rooms" :key="roomDetail">
+              <img :src="availbleHotelsDetails.data.hotel.thumbnail" class="w-[45%] mt-2 rounded-xl" />
 
               <p class="text-sm text-slate-400 py-0 my-0">
-                Adults : {{ roomDetail.Adults }}
-                <span>Kids : {{ roomDetail.Children }}</span>
+                <span>Adults : {{ roomDetail.occupancy.max_adults }}</span>
+                <span>Kids : {{ roomDetail.occupancy.max_children }}</span>
               </p>
               <span class="text-xs text-slate-400 py-0 my-0" v-for="(age, index) in roomDetail.ChildrenAges">Kid {{
                 index + 1 }} : {{ age }} years</span>
@@ -59,7 +62,7 @@
         <div class="flex w-[35%] m-5 self-center">
           <div class>
             <div class="flex justify-center">
-              <img :src="availbleHotelsDetails.hotel.min_image" class="w-[100%] rounded-xl" />
+              <img :src="availbleHotelsDetails.data.hotel.thumbnail" class="w-[100%] rounded-xl" />
             </div>
             <!-- <div>
               <p
@@ -97,16 +100,15 @@
             </div> -->
           </div>
         </div>
-        <div class="w-full">
+        <!--       <div class="w-full">
           <div
             class="flex flex-col bg-white sm:flex-row sm:flex-wrap remove-top-border justify-between border-solid border-1 border-slate-300"
-            v-for="rate in room.rates[0].open
+            v-for="rate in room?.rates[0].open
               ? room.rates
               : room.rates.slice(0, 2)" :key="rate">
 
             <div class="px-8">
               <p class="subheader font-light text-xl">Whats Included</p>
-              <!-- <p class="text-sm custom-extra-bold text-#5808D8">{{ rate.boardName }}</p> -->
 
               <ul class="ml-0 pl-0" v-if="rate.cancellationPolicies">
                 <li class="font-light m-0 p-0 list-style text-black py-1"
@@ -142,7 +144,6 @@
                   {{ rate.promotion[0] }}
                 </p>
               </div>
-              <!-- <hr class=""> -->
               <div class="text-slate-500">{{ rate.inclusion }}</div>
             </div>
 
@@ -185,7 +186,7 @@
             class="button hover:bg-violet-100 ease-in-out duration-300 font-bold text-purple-800 text-xs bg-violet-100 p-3 text-center cursor-pointer lg:md:block sm:hidden">
             {{ room.rates[0].open ? "Show less" : "Show more" }}
           </div>
-        </div>
+        </div> -->
 
       </div>
 
@@ -234,8 +235,13 @@ export default {
     ]),
     ...mapState("featuredHotels", ["featuredHotelsRooms"]),
     computedRooms() {
-      if (this.availbleHotelsDetails.hotel) {
-        return this.availbleHotelsDetails.hotel.rooms;
+
+      if (this.availbleHotelsDetails.data.rooms_count) {
+        console.log(this.availbleHotelsDetails.data.rooms_count)
+        console.log('111111111', this.availbleHotelsDetails.data)
+
+        alert(1)
+        return this.availbleHotelsDetails.data.rooms;
       }
     },
     getDiffrencetotalDays() {

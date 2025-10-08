@@ -1,4 +1,5 @@
 import axios , {AxiosSocket} from "@/plugins/axios";
+import { h } from "vue";
 // initial state
 const state = {
   searchHotels: {},
@@ -45,6 +46,7 @@ const mutations = {
     window.localStorage.setItem("uuid", state.uuid);
   },
   SET_AVAILABLE_HOTELS(state, payload) {
+    console.log("payload in mutation", payload);
     state.availbleHotels = payload;
   },
   SET_AVAILABLE_HOTELS_LOADER(state, payload) {
@@ -123,6 +125,7 @@ const actions = {
           // خزّن البيانات في الستور
           commit("SET_CACHE_KEY" , response.data.cache_key)
           commit("SET_AVAILABLE_HOTELS", response);
+          console.log("response from ws", response);
           localStorage.setItem('availbleHotels' , JSON.stringify(response))
           commit("SET_AVAILABLE_HOTELS_LOADER", false);
           commit("SET_ENABLE_FILTERS", true);
@@ -162,90 +165,134 @@ const actions = {
         return res
       }); */
   },
-    fetchFilteredHotels({ commit, dispatch, state }, filters) {
+  fetchFilteredHotels({ commit, state }, filters) {
+  commit("SET_AVAILABLE_HOTELS_LOADER", true);
 
-    commit("SET_AVAILABLE_HOTELS_LOADER", true);
-      
-      const x = new WebSocket('wss://stg-py.happytbooking.com/api/v1/hotels/ws/filter')
-      
-    commit("SET_CONNECTION",x);
+   
 
-    state.connection.onopen = function (e) {
-              
-      // const payload = {
-      //   action: "apply_filters",
-      //   search_id: state.cache_key,
-      //   sort_by_price: "asc",
-      //   hotel_name: filters.hotel_name,
-      //   sort_by_rating: "asc"
-      //  /*  filters: {
-      //     "price_range": {
-      //       "min": 100,
-      //       "max": 800
-      //     },
-      //     "star_rating": [2, 3, 4, 5]
-      //   } */
-      // }
+    const hotelsFromStorage =  JSON.parse(localStorage.getItem('availbleHotels')).data.hotels
+ console.log("filters in action", filters);
+    console.log("hotelsFromStorage", hotelsFromStorage);
+  try {
+    // Assume hotels are already in state (from fetchHotels)
+    let hotels = hotelsFromStorage || [];
+    console.log("Parsed hotels", JSON.parse(localStorage.getItem('availbleHotels')));
+    const hotel_search = JSON.parse(localStorage.getItem('availbleHotels')).data.hotel_search
+     // --- Hotel name search ---
+    if (filters.hotel_name && filters.hotel_name.trim() !== "") {
+      const name = filters.hotel_name.toLowerCase();
+      hotels = hotels.filter(h => h.name.toLowerCase().includes(name));
 
-      const payload = {
-        action: "apply_filters",
-        search_id: state.cache_key,
-        ...filters
-      }
-
-      state.connection.send(JSON.stringify(payload));
-
+    } else {
+      hotels = hotelsFromStorage
     }
+
+    if (filters.sort === "rating") {
+      hotels = [...hotels].sort((a, b) => Number(a.rating) - Number(b.rating));
+}
+
+    if (filters.sort === "price") {
+      hotels = [...hotels].sort((a, b) => Number(a.best_price?.amount) - Number(b.best_price?.amount));
+}
+
     
-    
-     state.connection.onmessage = function (e) {
-      try {
-        const response = JSON.parse(e.data);
+    // --- Price range filter ---
+    if ( filters.min != null && filters.max != null) {
+      const min = Number(filters.min);
+      const max = Number(filters.max);
 
-        if (response.code == 200) {
+      const dummy = hotels.filter(h => {
+        const price = Number(h.best_price?.amount || h.price || 0);
+        return price >= min && price <= max;
+      });
 
-          // خزّن البيانات في الستور
-          commit("SET_CACHE_KEY" , response.data.cache_key)
-          commit("SET_AVAILABLE_HOTELS", response);
-          commit("SET_AVAILABLE_HOTELS_LOADER", false);
-          commit("SET_ENABLE_FILTERS", true);
-          console.log('Heloooooooooo' , response)
-          state.connection.close()
+      if (dummy) {
+      hotels = dummy;
+    }
+    }
 
-        }
-      } catch (err) {
-        commit("SET_AVAILABLE_HOTELS_LOADER", false);
-                  state.connection.close()
+   // --- Rating filter ---
+    if (filters.rating && filters.rating.length > 0) {
+  console.log("Filtering by ratings", filters.rating);
 
-      }
-    };
+  const dummy = hotels.filter(h =>
+    filters.rating.includes(String(h.rating)) || filters.rating.includes(Number(h.rating))
+  );
 
-    // في حالة وجود خطأ
-    state.connection.onerror = function (err) {
-      console.error("WebSocket Error ❌", err);
-      commit("SET_AVAILABLE_HOTELS_LOADER", false);
-    };
+      if (dummy) {
+      hotels = dummy;
+    }
+}
+    if (! filters.rating) {
 
-    // عند إغلاق الاتصال
-    state.connection.onclose = function () {
-      console.log("WebSocket Closed");
-    };
+        hotels = hotelsFromStorage
+      
+      
+    }
+
+
+ /*    // --- Price filter ---
+    if (filters.price && filters.price.length === 2) {
+      const [min, max] = filters.price;
+      hotels = hotels.filter(h => h.price >= min && h.price <= max);
+    }
+
+    // --- Min / Max Price (alternative fields) ---
+    if (filters.min_price > 0) {
+      hotels = hotels.filter(h => h.price >= filters.min_price);
+    }
+    if (filters.max_price > 0) {
+      hotels = hotels.filter(h => h.price <= filters.max_price);
+    }
+
+    // --- Rating filter ---
+    if (filters.rating && filters.rating.length > 0) {
+      hotels = hotels.filter(h => filters.rating.includes(h.star_rating));
+    }
+
+   
+
+    // --- Sorting ---
+    if (filters.sort === "price_asc") {
+      hotels = [...hotels].sort((a, b) => a.price - b.price);
+    } else if (filters.sort === "price_desc") {
+      hotels = [...hotels].sort((a, b) => b.price - a.price);
+    } else if (filters.sort === "rating_desc") {
+      hotels = [...hotels].sort((a, b) => b.star_rating - a.star_rating);
+    } else if (filters.sort === "rating_asc") {
+      hotels = [...hotels].sort((a, b) => a.star_rating - b.star_rating);
+    }
+ */
+    // Prepare a response-like object to stay consistent
  
+    const response = {
+      code: 200,
+      data: {
+        hotels,
+        min_price: filters.min,
+        max_price: filters.max,
+        rates: JSON.parse(localStorage.getItem('availbleHotels')).data.rates,
+        cache_key: state.cache_key, // keep the existing cache_key
+        hotel_search 
+      },
+    };
 
-    /* // let str = JSON.stringify(filters)
-    commit("SET_AVAILABLE_HOTELS_LOADER", true);
-    return axios
-      .get("/api/mapping/hotels/search", { params: filters })
-      .then((res) => {
-        commit("SET_SEARCH_HOTELS", res.data);
-        commit("SET_UUID", res.data.searchData.uuid);
-        return res;
-      })
-      .then((res) => {
-        dispatch("fetchAvailbleHotel", { uuid: state.uuid });
-        return res
-      }); */
-  },
+
+
+    //commit("SET_CACHE_KEY" , response.data.cache_key)
+          commit("SET_AVAILABLE_HOTELS", response);
+          //localStorage.setItem('availbleHotels' , JSON.stringify(response))
+          commit("SET_AVAILABLE_HOTELS_LOADER", false);
+    commit("SET_ENABLE_FILTERS", true);
+    
+
+  } catch (err) {
+    console.error("Local filter error ❌", err);
+    commit("SET_AVAILABLE_HOTELS_LOADER", false);
+  }
+}
+
+   ,
   fetchAvailbleHotel({ state, commit }, filters) {
     return axios.get(`/api/available-hotels-cache-search?page=${state.page}`, { params: filters })
       .then((res) => {
