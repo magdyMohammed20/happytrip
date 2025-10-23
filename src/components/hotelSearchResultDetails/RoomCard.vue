@@ -18,10 +18,45 @@
           Total price: {{ room.price.amount }} {{ room.price.currency }}
         </p>
       </div>
-      <p v-if="room.cancellation_policy.is_refundable">
+      <p
+        class="flex items-center gap-2 text-#1CCF3D"
+        v-if="room.cancellation_policy.is_refundable"
+      >
         Free cancellation till:
         {{ room.cancel?.[0]?.to }}
+        <span
+          class="i-mdi-info text-xl bg-gray cursor-pointer hover:text-blue-500"
+          @click="showCancellationDialog = true"
+        ></span>
       </p>
+
+      <el-dialog
+        v-model="showCancellationDialog"
+        title="Cancellation Policy"
+        width="500px"
+      >
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-bold text-lg mb-2">Free Cancellation</h4>
+            <p class="text-gray-700">
+              You can cancel this booking free of charge until:
+            </p>
+            <p class="text-lg font-semibold text-#FF1E74 mt-2">
+              {{ formatDate(room.cancel?.[0]?.to) }}
+            </p>
+          </div>
+          <div v-if="room.cancel?.[0]?.from" class="pt-4 border-t">
+            <p class="text-sm text-#FF1E74">
+              From {{ formatDate(room.cancel?.[0]?.from) }} you will be charged
+              {{ room.cancel?.[0]?.amount }} {{ room.price?.currency }}
+            </p>
+          </div>
+        </div>
+        <template #footer>
+          <el-button @click="showCancellationDialog = false">Close</el-button>
+        </template>
+      </el-dialog>
+
       <el-button
         class="w-full text-white font-bold bg-#1CCF3D text-center mt-3 no-underline p-5 rounded-xl hover:bg-violet-700 hover:text-white ease-in-out duration-300 justify-center items-center"
       >
@@ -42,6 +77,21 @@ export default {
     hotelsDetails: {
       type: Object,
       required: true,
+    },
+  },
+  data() {
+    return {
+      showCancellationDialog: false,
+    };
+  },
+  methods: {
+    formatDate(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = String(date.getFullYear()).slice(-2);
+      return `${day}/${month}/${year}`;
     },
   },
 };
