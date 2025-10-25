@@ -22,6 +22,12 @@ const router = createRouter({
       // Async component
       component: () => import("@/views/HotelSearchResultsDetails.vue"),
     },
+    {
+      path: "/rooms/:roomId",
+      name: "RoomDetails",
+      // Async component
+      component: () => import("@/views/RoomDetails.vue"),
+    },
     //FeaturedHotels
     {
       path: "/FeaturedHotels",
@@ -140,7 +146,7 @@ const router = createRouter({
       component: () => import("@/views/ContactUs.vue"),
     },
     // travellers
-  
+
     {
       path: "/CheckOut",
       name: "CheckOut",
@@ -157,7 +163,7 @@ const router = createRouter({
         } else {
           console.log(
             "Object.keys(paymentStore.roomSelected).length ",
-            paymentStore
+            paymentStore,
           );
           next({ name: "Home" });
         }
@@ -175,7 +181,7 @@ const router = createRouter({
       name: "Login",
       // Async component
       component: () => import("@/views/Login.vue"),
-      meta: { layout: "Auth" }
+      meta: { layout: "Auth" },
     },
     // packagesCategories
     {
@@ -253,7 +259,6 @@ const router = createRouter({
   ],
 });
 router.beforeEach((to, from, next) => {
-
   const token = localStorage.getItem("token");
   //if logged in do not go to login but can go to loyalty.
   if (token && to.name == "Loyalty") next();
@@ -269,14 +274,14 @@ router.beforeEach((to, from, next) => {
   }
 });
 router.afterEach((to, from) => {
-  console.log("router.afterEach APPLIED")
-  if(!from.name){
-   store.commit("globalStore/SET_LOADING", false);
-  }else{
-   store.commit("globalStore/SET_LOADING", true);
+  console.log("router.afterEach APPLIED");
+  if (!from.name) {
+    store.commit("globalStore/SET_LOADING", false);
+  } else {
+    store.commit("globalStore/SET_LOADING", true);
   }
-  setTimeout(()=>{
-   store.commit("globalStore/SET_LOADING", false);
-  },800)
+  setTimeout(() => {
+    store.commit("globalStore/SET_LOADING", false);
+  }, 800);
 });
 export default router;

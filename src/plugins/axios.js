@@ -1,5 +1,9 @@
 import axios from "axios";
-import { handleRequestError, handleResponseError, handleNetworkError } from "./handlingErrors"
+import {
+  handleRequestError,
+  handleResponseError,
+  handleNetworkError,
+} from "./handlingErrors";
 let appInstance;
 let networkErrorLogged = false;
 // Function to set the Vue instance
@@ -20,8 +24,9 @@ const AxiosSocket = axios.create({
 Axios.interceptors.request.use(
   (config) => {
     if (localStorage.getItem("token") || localStorage.getItem("guest_token")) {
-      config.headers.Authorization = localStorage.getItem("token") || localStorage.getItem("guest_token");
-      console.log("my token", localStorage.getItem("token"));
+      config.headers.Authorization =
+        localStorage.getItem("token") || localStorage.getItem("guest_token");
+      // console.log("my token", localStorage.getItem("token"));
     }
     if (config.method === "get") {
       config.params = {
@@ -35,14 +40,15 @@ Axios.interceptors.request.use(
     console.log("request failed");
     handleRequestError(appInstance, error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Request interceptor
 AxiosSocket.interceptors.request.use(
   (config) => {
     if (localStorage.getItem("token") || localStorage.getItem("guest_token")) {
-      config.headers.Authorization = localStorage.getItem("token") || localStorage.getItem("guest_token");
+      config.headers.Authorization =
+        localStorage.getItem("token") || localStorage.getItem("guest_token");
       console.log("my token", localStorage.getItem("token"));
     }
     if (config.method === "get") {
@@ -57,7 +63,7 @@ AxiosSocket.interceptors.request.use(
     console.log("request failed");
     handleRequestError(appInstance, error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor
@@ -85,5 +91,5 @@ const errorInterceptor = (error) => {
 Axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 AxiosSocket.interceptors.response.use(responseInterceptor, errorInterceptor);
 
-export {AxiosSocket}
+export { AxiosSocket };
 export default Axios;

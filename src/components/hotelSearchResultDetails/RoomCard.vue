@@ -58,6 +58,7 @@
       </el-dialog>
 
       <el-button
+        @click="navigateToRoomDetails"
         class="w-full text-white font-bold bg-#1CCF3D text-center mt-3 no-underline p-5 rounded-xl hover:bg-violet-700 hover:text-white ease-in-out duration-300 justify-center items-center"
       >
         Select Room
@@ -92,6 +93,27 @@ export default {
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const year = String(date.getFullYear()).slice(-2);
       return `${day}/${month}/${year}`;
+    },
+    navigateToRoomDetails() {
+      // Generate a unique room ID if not available
+      const roomId = this.room.id || this.room.room_id || `room-${Date.now()}`;
+      const hotelId =
+        this.hotelsDetails?.data?.hotel?.id ||
+        this.hotelsDetails?.data?.hotel?.uuid ||
+        "unknown";
+
+      // Pass room data as query parameter for the room details page
+      const roomData = JSON.stringify(this.room);
+
+      this.$router.push({
+        name: "RoomDetails",
+        params: {
+          roomId: roomId,
+        },
+        query: {
+          roomData: roomData,
+        },
+      });
     },
   },
 };
