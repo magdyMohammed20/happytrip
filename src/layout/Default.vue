@@ -2,13 +2,17 @@
   <div
     v-loading.fullscreen.lock="$store.state.globalStore.loading"
     element-loading-background="#fff"
+    class="overflow-x-hidden"
   >
     <the-mobile-header class="lg:hidden sm:block" />
     <the-header class="sm:hidden lg:block" v-if="layoutAppearnce" />
-    <el-main class="px-0">
+    <el-main class="px-0 overflow-x-hidden">
       <slot></slot>
     </el-main>
-    <el-footer v-if="layoutAppearnce" class="h-fit lg:px-20 md:px-15 sm:px-5 px-20 mx-auto shadow">
+    <el-footer
+      v-if="layoutAppearnce"
+      class="h-fit lg:px-20 md:px-15 sm:px-5 px-20 mx-auto shadow"
+    >
       <the-footer />
     </el-footer>
   </div>
@@ -21,18 +25,18 @@ export default {
   name: "DefaultLayout",
   components: {
     TheHeader,
-    TheFooter
+    TheFooter,
   },
   data() {
     return {
-      layoutAppearnce: false
+      layoutAppearnce: false,
     };
   },
   created() {
     setTimeout(() => {
       this.layoutAppearnce = true;
     }, 1200);
-  }
+  },
 };
 </script>
 
