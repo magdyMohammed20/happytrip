@@ -293,9 +293,9 @@ export default {
       return Math.ceil(
         Math.abs(
           new Date(this.availbleHotelsDetails.checkIn) -
-            new Date(this.availbleHotelsDetails.checkOut)
+            new Date(this.availbleHotelsDetails.checkOut),
         ) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24),
       );
     },
     getCurrencyType() {
@@ -452,14 +452,14 @@ export default {
           this.filterRooms(
             (rate) =>
               rate.boardName == "BED AND BREAKFAST" &&
-              this.isFreeToCancel(rate.cancellationPolicies)
+              this.isFreeToCancel(rate.cancellationPolicies),
           );
         } else if (filter.breakfast) {
           // TODO: breackfastFilter boardCode {'BreakFast', 'BreakFast', 'BreakFast', 'BreakFast'} ;
           this.filterRooms((rate) => rate.boardName == "BED AND BREAKFAST");
         } else {
           this.filterRooms((rate) =>
-            this.isFreeToCancel(rate.cancellationPolicies)
+            this.isFreeToCancel(rate.cancellationPolicies),
           );
         }
       },

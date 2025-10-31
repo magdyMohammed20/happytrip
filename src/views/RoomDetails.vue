@@ -547,7 +547,11 @@ export default {
           "hotels/fetchRoomById",
           roomId,
         );
+
         this.roomDetails = roomData.data || roomData;
+
+        // Build checkout object on page load once room details are available
+        this.buildCheckout();
 
         if (!this.roomDetails) {
           console.error("Room not found");
@@ -563,6 +567,46 @@ export default {
         if (!this.roomDetails) {
           this.$router.go(-1);
         }
+        // If we have room details from query, still build checkout
+        if (this.roomDetails) {
+          this.buildCheckout();
+        }
+      }
+    },
+
+    buildCheckout() {
+      // console.log("this.hotelDetails", this.hotelDetails);
+      console.log("this roomDetails", this.roomDetails);
+      try {
+        const availbleHotels = JSON.parse(
+          localStorage.getItem("availbleHotels") || "{}",
+        );
+        const filters = JSON.parse(localStorage.getItem("filters") || "{}");
+        const hotelDetails =
+          JSON.parse(localStorage.getItem("hotelDetails")).data.hotel || {};
+        const cacheKey = availbleHotels.data && availbleHotels.data.cache_key;
+        const checkoutObj = {
+          uuid: cacheKey,
+          vervotech_id: hotelDetails?.vervotech_id,
+          provider: hotelDetails?.provider_name || "HotelBeds",
+          rateKey: this.roomDetails?.vendor_data?.rate_key,
+          searchData: {
+            ...filters,
+            rooms: [
+              {
+                Adults: filters.rooms[0].adults_number,
+                Children: filters.rooms[0].children_number,
+                ChildrenAges: filters.rooms[0].children_ages || [],
+              },
+            ],
+            nationality: "EG",
+          },
+          rate_base_id: hotelDetails?.rate_base_id,
+        };
+
+        localStorage.setItem("checkout", JSON.stringify(checkoutObj));
+      } catch (e) {
+        console.error("Failed to persist checkout object", e);
       }
     },
 

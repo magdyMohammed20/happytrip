@@ -210,7 +210,7 @@ export default {
 
     filterSelected() {
       const parsedAvailableHotels = JSON.parse(
-        localStorage.getItem("availbleHotels")
+        localStorage.getItem("availbleHotels"),
       );
 
       //alert(JSON.stringify(this.availbleHotels) == {})
@@ -218,10 +218,10 @@ export default {
       //console.log('111123', this.availbleHotels?.data)
       const obj = this.availbleHotels?.data
         ? this.availbleHotels.data.hotels.filter(
-            (item) => item.vervotech_id == this.$route.params.vervotech_id
+            (item) => item.vervotech_id == this.$route.params.vervotech_id,
           )
         : parsedAvailableHotels.data.hotels.filter(
-            (item) => item.vervotech_id == this.$route.params.vervotech_id
+            (item) => item.vervotech_id == this.$route.params.vervotech_id,
           );
 
       return JSON.parse(JSON.stringify(obj))[0];

@@ -96,7 +96,7 @@ const actions = {
     commit("SET_AVAILABLE_HOTELS_LOADER", true);
 
     const x = new WebSocket(
-      "wss://stg-py.happytbooking.com/api/v1/hotels/ws/search"
+      "wss://stg-py.happytbooking.com/api/v1/hotels/ws/search",
     );
 
     commit("SET_CONNECTION", x);
@@ -171,7 +171,7 @@ const actions = {
       let hotels = hotelsFromStorage || [];
       console.log(
         "Parsed hotels",
-        JSON.parse(localStorage.getItem("availbleHotels"))
+        JSON.parse(localStorage.getItem("availbleHotels")),
       );
       const hotel_search = JSON.parse(localStorage.getItem("availbleHotels"))
         .data.hotel_search;
@@ -185,13 +185,13 @@ const actions = {
 
       if (filters.sort === "rating") {
         hotels = [...hotels].sort(
-          (a, b) => Number(a.rating) - Number(b.rating)
+          (a, b) => Number(a.rating) - Number(b.rating),
         );
       }
 
       if (filters.sort === "price") {
         hotels = [...hotels].sort(
-          (a, b) => Number(a.best_price?.amount) - Number(b.best_price?.amount)
+          (a, b) => Number(a.best_price?.amount) - Number(b.best_price?.amount),
         );
       }
 
@@ -217,7 +217,7 @@ const actions = {
         const dummy = hotels.filter(
           (h) =>
             filters.rating.includes(String(h.rating)) ||
-            filters.rating.includes(Number(h.rating))
+            filters.rating.includes(Number(h.rating)),
         );
 
         if (dummy) {
@@ -308,15 +308,15 @@ const actions = {
   // },
   fetchAvailbleHotelRooms(
     { commit, state },
-    { /* uuid, vervotech_id */ payload }
+    { /* uuid, vervotech_id */ payload },
   ) {
     // stg-py.happytbooking.com/
     return AxiosSocket.post(`/api/v1/rooms/hotel-details`, payload).then(
       (res) => {
-        console.log("res data of rooms", res.data);
+        localStorage.setItem("hotelDetails", JSON.stringify(res.data));
         commit("SET_AVAILABLE_HOTELS_DETAILS", res.data);
         return res;
-      }
+      },
     );
   },
 
@@ -324,7 +324,6 @@ const actions = {
     // Fetch individual room details by room ID
     return AxiosSocket.get(`/api/v1/rooms/${roomId}`)
       .then((res) => {
-        console.log("res data of single room", res.data);
         return res.data;
       })
       .catch((error) => {
@@ -335,7 +334,7 @@ const actions = {
 
   convertCurrency({ state, commit }, { from, to, amount = 100 }) {
     return fetch(
-      `https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}&access_key=e9cffdf0d37553e4849840e1856323b8`
+      `https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}&access_key=e9cffdf0d37553e4849840e1856323b8`,
     )
       .then((res) => {
         let response = res.json();
