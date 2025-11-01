@@ -88,6 +88,7 @@ export default {
   },
   computed: {
     ...mapState("checkout", ["checkoutData"]),
+    ...mapState("userAccount", ["profileData"]),
     // Ensure checkout data is ready before rendering components
     isCheckoutDataReady() {
       const ready = !!(
@@ -167,13 +168,14 @@ export default {
         );
         console.log("Payment settings:", settingsResponse.data);
 
-        // Get user data from localStorage or store
-        const userData = JSON.parse(localStorage.getItem("user") || "{}");
+        // Get user data from Vuex store
+        const userData = this.profileData;
 
         // Get amount directly from totalFare
         const amount = this.totalAmount;
 
         console.log("=== PAYMENT DATA ===");
+        console.log("User data:", userData);
         console.log("Total amount:", amount);
         console.log("Currency:", this.currency);
         console.log("=== END PAYMENT DATA ===");
@@ -183,14 +185,15 @@ export default {
           return;
         }
 
-        // Prepare charge data
+        // Prepare charge data with proper user info
+        const fullName =
+          userData.name ||
+          `${userData.first_name || userData.firstname || ""} ${
+            userData.middle_name || ""
+          } ${userData.lastname || ""}`.trim();
+
         const chargeData = {
-          name:
-            userData.name ||
-            `${userData.first_name || ""} ${userData.middle_name || ""} ${
-              userData.last_name || ""
-            }`.trim() ||
-            "Guest",
+          name: fullName || "Guest",
           email: userData.email || "guest@example.com",
           amount: amount,
           currency: this.currency,
