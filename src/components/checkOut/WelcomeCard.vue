@@ -1,12 +1,12 @@
 <template>
   {{ this.computedManyRoomSelection }}
-  <el-card v-if="!checkoutData.bookingData">
+  <el-card v-if="!checkoutDataComputed?.bookingData">
     <loading-card></loading-card>
   </el-card>
   <div v-else>
     <el-card
       class="welcome-card mt-10"
-      v-for="(roomPassenger, index) in checkoutData.bookingData.paxes"
+      v-for="(roomPassenger, index) in checkoutDataComputed.bookingData.paxes"
       :key="index"
     >
       <template #header>
@@ -15,7 +15,7 @@
         </div>
       </template>
       <div
-        v-if="profileData.user_id && checkoutData.bookingData"
+        v-if="profileData.user_id && checkoutDataComputed.bookingData"
         class="bg-slate-100 lg:md:pt-0 rounded-xl lg:md:mt-0 sm:p-3 md:px-5 border-solid border-2 border-sky-500 items-center gap-4"
       >
         <el-row class="justify-between" align="middle">
@@ -31,11 +31,11 @@
           <el-col :span="10">
             <div class="px-6">
               <el-select
-                v-if="checkoutData.bookingData"
+                v-if="checkoutDataComputed.bookingData"
                 :disabled="
                   (roomPassenger.Adults == '1') &
                   (roomPassenger.Children == '0') &
-                  (checkoutData.bookingData.paxes.length < 2)
+                  (checkoutDataComputed.bookingData.paxes.length < 2)
                 "
                 class="mt-4 w-full"
                 @change="
@@ -469,6 +469,12 @@
 import { VueTelInput } from "vue3-tel-input";
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
+  props: {
+    checkoutData: {
+      type: Object,
+      default: null,
+    },
+  },
   components: {
     VueTelInput,
   },
@@ -637,15 +643,20 @@ export default {
         return Object.assign(
           {},
           state.payment.hotel,
-          state.hotels.availbleHotelsDetails
+          state.hotels.availbleHotelsDetails,
         );
       },
       bookingDetails: (state) => state.payment.searchForm,
-      checkoutData: (state) => state.checkout.checkoutData,
       profileData: (state) => state.userAccount.profileData,
       userTravellers: (state) => state.checkout.userTravellers,
       userTravellersasly: (state) => state.checkout.userTravellersasly,
     }),
+    // Use prop if provided, otherwise fall back to Vuex store
+    checkoutDataComputed() {
+      const data = this.checkoutData || this.$store.state.checkout.checkoutData;
+      console.log("WelcomeCard - checkoutDataComputed:", data);
+      return data;
+    },
     currentCurrency() {
       return window.localStorage.getItem("CURR") || "SAR";
     },
@@ -675,15 +686,17 @@ export default {
       payload.uuid = this.roomSelected.uuid;
       payload.amount = this.roomSelected.net;
       payload.rateKey =
-        this.checkoutData.hotel[0].provider == "DidaTravel"
-          ? this.checkoutData.hotel[0].bookingCode
+        this.checkoutDataComputed.hotel[0].provider == "DidaTravel"
+          ? this.checkoutDataComputed.hotel[0].bookingCode
           : this.roomSelected.rateKey;
-      payload.provider = this.checkoutData.hotel[0].provider;
-      payload.hotelCode = JSON.stringify(this.checkoutData.hotel[0].hotelCode);
-      payload.totalFare = this.checkoutData.hotel[0].totalFare;
-      payload.currency = this.checkoutData.hotel[0].currency;
-      payload.paymentCurrency = this.checkoutData.hotel[0].currency;
-      payload.is_free = this.checkoutData.hotel[0].is_free ? 1 : 0;
+      payload.provider = this.checkoutDataComputed.hotel[0].provider;
+      payload.hotelCode = JSON.stringify(
+        this.checkoutDataComputed.hotel[0].hotelCode,
+      );
+      payload.totalFare = this.checkoutDataComputed.hotel[0].totalFare;
+      payload.currency = this.checkoutDataComputed.hotel[0].currency;
+      payload.paymentCurrency = this.checkoutDataComputed.hotel[0].currency;
+      payload.is_free = this.checkoutDataComputed.hotel[0].is_free ? 1 : 0;
       payload.loyality = 0;
       payload.total = this.roomSelected.net;
       payload.payment_type = this.isTapPayment ? "tap_payment" : null;
@@ -732,7 +745,7 @@ export default {
       return this.nonFixedPayload(
         payload,
         { loyality: this.redeemChecked ? this.roomSelected.net : 0 },
-        { wallet: this.isWallet ? this.roomSelected.net : 0 }
+        { wallet: this.isWallet ? this.roomSelected.net : 0 },
       );
       // return payload;
     },
@@ -837,8 +850,8 @@ export default {
     },
 
     handleManyRoomSelection() {
-      if (this.checkoutData.bookingData?.paxes?.length > 1) {
-        for (const pax of this.checkoutData.bookingData?.paxes) {
+      if (this.checkoutDataComputed.bookingData?.paxes?.length > 1) {
+        for (const pax of this.checkoutDataComputed.bookingData?.paxes) {
           console.log("handleManyRoomSelection");
 
           this.singleTraveller.push({
@@ -847,7 +860,7 @@ export default {
             email: "",
           });
         }
-      } else if (this.checkoutData.bookingData?.paxes?.length == 1) {
+      } else if (this.checkoutDataComputed.bookingData?.paxes?.length == 1) {
         this.singleTraveller.push({
           first_name: "",
           last_name: "",
@@ -872,8 +885,8 @@ export default {
       setRoom: "payment/SET_ROOM_SELECTED",
     }),
     isOneTraveller() {
-      return this.checkoutData.bookingData.paxes[0].Adults == 1 &&
-        this.checkoutData.bookingData.paxes[0].Children == "0"
+      return this.checkoutDataComputed.bookingData.paxes[0].Adults == 1 &&
+        this.checkoutDataComputed.bookingData.paxes[0].Children == "0"
         ? true
         : false;
     },
@@ -1035,7 +1048,7 @@ export default {
         .then((response) => {
           if (!response.configuration.products.installments.is_available) {
             this.$toast.show(
-              response.configuration.products.installments.rejection_reason
+              response.configuration.products.installments.rejection_reason,
             );
           } else {
             window.location.href =
@@ -1115,7 +1128,7 @@ export default {
         } else {
           this.$toast.error("Please fill the required data first");
           this.$toast.error(
-            "Your First name , Last name , Email and Phone is required"
+            "Your First name , Last name , Email and Phone is required",
           );
           document.getElementById("tel-input").innerText =
             "please input this text";
@@ -1123,7 +1136,8 @@ export default {
       });
     },
     async validate(formRef) {
-      this.$refs["formRef"][0].validate().then((valid) => {
+      console.log("this should run");
+      this.$refs["formRef"][0]?.validate()?.then((valid) => {
         if (valid) {
           if (!this.form.mobile_num) {
             this.checkPhoneNumberDialog = true;
@@ -1146,14 +1160,16 @@ export default {
       payload.redeemPoints = this.redeemChecked ? this.form.redeemPoints : 0;
       payload.uuid = this.roomSelected.uuid;
       payload.rateKey =
-        this.checkoutData.hotel[0].provider == "DidaTravel"
-          ? this.checkoutData.hotel[0].bookingCode
+        this.checkoutDataComputed.hotel[0].provider == "DidaTravel"
+          ? this.checkoutDataComputed.hotel[0].bookingCode
           : this.roomSelected.rateKey;
-      payload.provider = this.checkoutData.hotel[0].provider;
-      payload.hotelCode = JSON.stringify(this.checkoutData.hotel[0].hotelCode);
-      payload.totalFare = this.checkoutData.hotel[0].totalFare;
-      payload.currency = this.checkoutData.hotel[0].currency;
-      payload.is_free = this.checkoutData.hotel[0].is_free ? 1 : 0;
+      payload.provider = this.checkoutDataComputed.hotel[0].provider;
+      payload.hotelCode = JSON.stringify(
+        this.checkoutDataComputed.hotel[0].hotelCode,
+      );
+      payload.totalFare = this.checkoutDataComputed.hotel[0].totalFare;
+      payload.currency = this.checkoutDataComputed.hotel[0].currency;
+      payload.is_free = this.checkoutDataComputed.hotel[0].is_free ? 1 : 0;
       payload.loyality = type == "loylity" ? balance : 0;
       payload.total = balance ? balance : this.roomSelected.net;
       payload.payment_type = this.isTapPayment ? "tap_payment" : null;
@@ -1174,9 +1190,10 @@ export default {
       } else {
         payload.rooms = this.travellers.map((el, index) => {
           let roomTravller = this.userTravellers.find((item) => item.id == el);
-          let countOfAdults = this.checkoutData.bookingData.paxes[index].Adults;
+          let countOfAdults =
+            this.checkoutDataComputed.bookingData.paxes[index].Adults;
           let countOfChildren =
-            this.checkoutData.bookingData.paxes[index].Children;
+            this.checkoutDataComputed.bookingData.paxes[index].Children;
           console.log("countOfAdults", countOfAdults);
           return {
             CustomerNames: Array.from(
@@ -1187,7 +1204,7 @@ export default {
                 LastName: roomTravller.last_name + i,
                 Type: roomTravller.type,
                 age: roomTravller.age ?? "10",
-              })
+              }),
             ),
           };
         });
@@ -1218,15 +1235,34 @@ export default {
       await goSell.openLightBox();
     },
     getPublicKey() {
-      this.$axios.get(`api/payment/tapPay/getSetting`).then((res) => {
-        res.data.forEach((element) => {
-          if (element.payment_type == "tap_payment") {
-            this.tabPublicKey = element.web_token;
-          } else {
-            this.tappyPublicKey = element.web_token;
+      this.$axios
+        .get(`api/payment/tapPay/getSetting`)
+        .then((res) => {
+          // Handle both array and object responses
+          const data = Array.isArray(res.data)
+            ? res.data
+            : res.data?.data || [];
+
+          if (Array.isArray(data)) {
+            data.forEach((element) => {
+              if (element.payment_type == "tap_payment") {
+                this.tabPublicKey = element.web_token;
+              } else {
+                this.tappyPublicKey = element.web_token;
+              }
+            });
+          } else if (data && typeof data === "object") {
+            // Handle single object response
+            if (data.payment_type == "tap_payment") {
+              this.tabPublicKey = data.web_token;
+            } else {
+              this.tappyPublicKey = data.web_token;
+            }
           }
+        })
+        .catch((error) => {
+          console.error("Error fetching payment settings:", error);
         });
-      });
     },
     initPaymentConfiguration(price, payload) {
       console.log("this.currentCurrency", this.currentCurrency);
@@ -1400,9 +1436,9 @@ export default {
     },
   },
   watch: {
-    checkoutData: {
+    checkoutDataComputed: {
       handler(val) {
-        if (val.bookingData?.paxes?.length > 1) {
+        if (val?.bookingData?.paxes?.length > 1) {
           for (const pax in val.bookingData?.paxes?.length) {
             this.singleTraveller.push({
               first_name: "",

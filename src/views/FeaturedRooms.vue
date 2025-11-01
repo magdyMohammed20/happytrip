@@ -45,7 +45,7 @@ export default {
   created() {
     console.error(
       "this.$route.querythis.$route.querythis.$route.query",
-      this.$route.query
+      this.$route.query,
     );
     let decoded = decodeURIComponent(this.$route.query.x);
     let parsedQuery = JSON.parse(decoded);

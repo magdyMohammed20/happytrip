@@ -96,11 +96,7 @@ export default {
     },
     navigateToRoomDetails() {
       // Generate a unique room ID if not available
-      const roomId = this.room.id || this.room.room_id || `room-${Date.now()}`;
-      const hotelId =
-        this.hotelsDetails?.data?.hotel?.id ||
-        this.hotelsDetails?.data?.hotel?.uuid ||
-        "unknown";
+      const roomId = this.room.id || this.room.room_id;
 
       // Pass room data as query parameter for the room details page
       const roomData = JSON.stringify(this.room);

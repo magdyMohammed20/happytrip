@@ -1,37 +1,61 @@
 <template>
-  <el-col v-if="hotelsLoader" class="lg:md:px-10 sm:px-2" :span="24" :lg="15" :md="15" :sm="24">
+  <el-col
+    v-if="hotelsLoader"
+    class="lg:md:px-10 sm:px-2"
+    :span="24"
+    :lg="15"
+    :md="15"
+    :sm="24"
+  >
     <loadingHotelComponent></loadingHotelComponent>
   </el-col>
 
-  <el-col v-else :span="24" :lg="15" :md="15" :sm="24" class="lg:md:px-10 sm:px-2">
-
+  <el-col
+    v-else
+    :span="24"
+    :lg="15"
+    :md="15"
+    :sm="24"
+    class="lg:md:px-10 sm:px-2"
+  >
     <div>
       <p class="font-bold pt-5 mt-1 text-basic px-1">
-
-        {{ availbleHotels?.data?.pagination?.total ? availbleHotels?.data?.pagination?.total :
-          availbleHotels.data?.hotels?.length }} Hotel Search Result
+        {{
+          availbleHotels?.data?.pagination?.total
+            ? availbleHotels?.data?.pagination?.total
+            : availbleHotels.data?.hotels?.length
+        }}
+        Hotel Search Result
       </p>
     </div>
 
-
-
-    <div v-if="!!availbleHotels" v-for="(card, index) in availbleHotels?.data?.hotels" :key="card.id">
-
+    <div
+      v-if="!!availbleHotels"
+      v-for="(card, index) in availbleHotels?.data?.hotels"
+      :key="card.id"
+    >
       <el-card :body-style="{ padding: '0px' }" class="my-5 sm:px-3 lg:md:px-0">
-        <div class="flex  sm:flex-col gap-4 lg:md:flex-row">
+        <div class="flex sm:flex-col gap-4 lg:md:flex-row">
           <div>
-            <img :src="card?.thumbnail" class="image hotel-img lg:md:w-60 sm:w-full" />
+            <img
+              :src="card?.thumbnail"
+              class="image hotel-img lg:md:w-60 sm:w-full"
+            />
           </div>
           <div
-            class="w-[20%] p-2 sm:pb-5 lg:border-b-0 sm:border-b-1 sm:border-b-1 sm:border-t-0 sm:border-l-0 sm:border-r-0 sm:border-dashed sm:border-slate-400">
+            class="w-[20%] p-2 sm:pb-5 lg:border-b-0 sm:border-b-1 sm:border-b-1 sm:border-t-0 sm:border-l-0 sm:border-r-0 sm:border-dashed sm:border-slate-400"
+          >
             <h3 class="font-bold text-4">{{ card.name }}</h3>
             <div class="bottom">
               <span class="i-mdi-location text-3xl h-5 text-purple-800"></span>
-              <span class="text-xs text-slate-500">{{
-                card.address
-                }}</span>
+              <span class="text-xs text-slate-500">{{ card.address }}</span>
               <div>
-                <el-rate v-model="card.rating" size="large" disabled text-color="#ff9900" />
+                <el-rate
+                  v-model="card.rating"
+                  size="large"
+                  disabled
+                  text-color="#ff9900"
+                />
               </div>
               <div>
                 <span class="i-mdi-wifi text-3xl h-5 text-purple-800"></span>
@@ -40,28 +64,42 @@
               </div>
             </div>
           </div>
-          <div style="padding: 14px" class="lg:md:self-center m-auto sm:w-full lg:w-fit sm:self-start">
+          <div
+            style="padding: 14px"
+            class="lg:md:self-center m-auto sm:w-full lg:w-fit sm:self-start"
+          >
             <p class="text-#FF1E74 font-bold rounded-1 text-md p-1">
               <!-- TODO CUURENCY PRICE WAIT FOR IT GIVES NAN BECAUSE CONVERTER API  -->
-              <span class="text-#FF1E74 text-md p-1">{{ card.best_price?.supplements_fee?.currency ?
-                card.best_price?.supplements_fee?.currency : currentCurrency }}</span>
-
+              <span class="text-#FF1E74 text-md p-1">{{
+                card.best_price?.supplements_fee?.currency
+                  ? card.best_price?.supplements_fee?.currency
+                  : currentCurrency
+              }}</span>
 
               <!-- {{ claculatePrice(card.minRate) }} -->
               {{ Math.round(card?.best_price?.amount) }}
             </p>
-            <div class="bottom lg:block sm:flex justify-between sm:w-full lg:w-fit">
+            <div
+              class="bottom lg:block sm:flex justify-between sm:w-full lg:w-fit"
+            >
               <!-- {{ card }} -->
               <div>
-                <router-link :to="'/HotelSearchResultsDetails/' +
-                  card.name +
-                  '/' +
-                  availbleHotels.uuid +
-                  '/' +
-                  card.vervotech_id
-                  " class="no-underline">
-                  <el-button text class="button custom-button font-bold px-3 py-5 lg:md:mx-0 sm:mx-3">Select
-                    Room</el-button>
+                <router-link
+                  :to="
+                    '/HotelSearchResultsDetails/' +
+                    card.name +
+                    '/' +
+                    availbleHotels.uuid +
+                    '/' +
+                    card.vervotech_id
+                  "
+                  class="no-underline"
+                >
+                  <el-button
+                    text
+                    class="button custom-button font-bold px-3 py-5 lg:md:mx-0 sm:mx-3"
+                    >Select Room</el-button
+                  >
                 </router-link>
               </div>
             </div>
@@ -69,8 +107,12 @@
         </div>
       </el-card>
       <router-link to="/loyalty" class="router-style">
-        <el-card v-if="shouldRenderStaticCard(index)" :key="'static-card-' + index" :body-style="{ padding: '0px' }"
-          class="my-5 sm:px-3 lg:md:px-0 gradient-background">
+        <el-card
+          v-if="shouldRenderStaticCard(index)"
+          :key="'static-card-' + index"
+          :body-style="{ padding: '0px' }"
+          class="my-5 sm:px-3 lg:md:px-0 gradient-background"
+        >
           <div class="text-center">
             <p class="text-white text-6" v-if="profileData.id">
               You now have {{ loyaltyData.reminderNights }} free nights from the
@@ -86,9 +128,14 @@
             </p> -->
             <p class="text-white text-6 custom-extra-bold">RAHAL PROGRAM</p>
 
-            <el-progress v-if="profileData.id" :text-inside="true" :stroke-width="24"
-              :percentage="Math.ceil((loyaltyData.reminderNights / 15) * 100)" color="#1CCF3D"
-              class="w-[40%] m-auto pb-10" />
+            <el-progress
+              v-if="profileData.id"
+              :text-inside="true"
+              :stroke-width="24"
+              :percentage="Math.ceil((loyaltyData.reminderNights / 15) * 100)"
+              color="#1CCF3D"
+              class="w-[40%] m-auto pb-10"
+            />
             <router-link v-else to="/login">
               <el-button class="bg-#1CCF3D p-5 text-white m-5">
                 Login Now!
@@ -97,7 +144,9 @@
 
             <p class="text-xs text-white" v-if="!profileData.id">
               Don't have Account ?
-              <router-link class="text-white" to="/Registration">sign up</router-link>
+              <router-link class="text-white" to="/Registration"
+                >sign up</router-link
+              >
             </p>
             <p class="text-xs text-white pt-0 mt-0" v-else>
               Book remainig {{ 15 - loyaltyData.reminderNights }} nights to get
@@ -105,9 +154,14 @@
             </p>
           </div>
           <div class="flex justify-between relative">
-            <img src="../../assets/images/whitePlanelotalty.png"
-              class="white-plan-img self-end absolute bottom-[-7px] left-[-7px]" />
-            <img src="../../assets/images/grayCity.png" class="absolute bottom-[0px] right-[0px]" />
+            <img
+              src="../../assets/images/whitePlanelotalty.png"
+              class="white-plan-img self-end absolute bottom-[-7px] left-[-7px]"
+            />
+            <img
+              src="../../assets/images/grayCity.png"
+              class="absolute bottom-[0px] right-[0px]"
+            />
           </div>
         </el-card>
       </router-link>
@@ -152,7 +206,7 @@ export default {
             })
             .catch((e) => {
               this.$toast.error(
-                "An error happened : " + e.response.data.message
+                "An error happened : " + e.response.data.message,
               );
             });
         }
@@ -163,7 +217,6 @@ export default {
       // immediate: true
     },
   },
-
 
   methods: {
     shouldRenderStaticCard(index) {
@@ -209,7 +262,7 @@ export default {
         return Math.round(amountAfterVendorMargin);
       }
     },
-    calculateTaxex(price) { },
+    calculateTaxex(price) {},
     // getLeastPrice(room) {
     //   let leastPrice = Infinity;
     //   for (let key in room) {
@@ -330,10 +383,12 @@ export default {
 
 .gradient-background {
   background: rgb(134, 18, 234);
-  background: linear-gradient(90deg,
-      rgba(134, 18, 234, 1) 0%,
-      rgba(134, 18, 234, 0.8156512605042017) 50%,
-      rgba(111, 3, 223, 1) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(134, 18, 234, 1) 0%,
+    rgba(134, 18, 234, 0.8156512605042017) 50%,
+    rgba(111, 3, 223, 1) 100%
+  );
 }
 
 .router-style {

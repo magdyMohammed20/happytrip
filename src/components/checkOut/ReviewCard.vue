@@ -1,6 +1,6 @@
 <template>
   <el-card
-    v-if="!checkoutData.bookingData & !checkoutData.hotel"
+    v-if="!checkoutDataComputed?.bookingData || !checkoutDataComputed?.hotel"
     class="review-card"
   >
     <loading-card></loading-card>
@@ -19,7 +19,7 @@
       >
         <div class="flex flex-col w-fit">
           <img
-            :src="hotelDetails.hotel.min_image"
+            :src="hotelDetails.hotel?.min_image"
             class="image md:w-70 sm:w-full mb-4 rounded-3xl"
           />
           <el-button
@@ -33,16 +33,16 @@
             class="sm:pb-5 lg:border-b-0 sm:border-b-1 sm:border-t-0 sm:border-l-0 sm:border-r-0 sm:border-dashed sm:border-slate-400"
             >-->
         <div class="mt-2 md:mx-7 w-[40%]">
-          <h3 class="font-bold m-1">{{ checkoutData.bookingData.name }}</h3>
+          <h3 class="font-bold m-1">{{ checkoutDataComputed.bookingData.name }}</h3>
           <div class="bottom">
             <span class="i-mdi-map-marker-outline text-xl h-5"></span>
             <span class="text-xs text-slate-500">{{
-              checkoutData.bookingData.addressLine1
+              checkoutDataComputed.bookingData.addressLine1
             }}</span>
 
             <div>
               <el-rate
-                v-model="checkoutData.bookingData.rating"
+                v-model="checkoutDataComputed.bookingData.rating"
                 size="xlarge"
                 disabled
                 text-color="#ff9900"
@@ -53,15 +53,15 @@
               <ul class="list-none px-0.75 m-0">
                 <li class="text-slate-500 text-sm my-1">
                   <span>Adults Number</span>
-                  {{ checkoutData.bookingData.adultsNumber }}
+                  {{ checkoutDataComputed.bookingData.adultsNumber }}
                 </li>
                 <li class="text-slate-500 text-sm my-1">
                   <span>Kids Number</span>
-                  {{ checkoutData.bookingData.childrenNumber }}
+                  {{ checkoutDataComputed.bookingData.childrenNumber }}
                 </li>
                 <li class="text-slate-500 text-sm my-1">
                   <span>Days Number</span>
-                  {{ checkoutData.bookingData.nightsNumber }}
+                  {{ checkoutDataComputed.bookingData.nightsNumber }}
                 </li>
 
                 <!-- <li class="font-bold">{{ roomName}}</li> -->
@@ -115,22 +115,22 @@
                 <p
                   class="font-bold my-1 custom-extra-bold px-1 text-4xl text-green-500"
                 >
-                  {{ new Date(checkoutData.bookingData.checkin).getDate() }}
+                  {{ new Date(checkoutDataComputed.bookingData.checkin).getDate() }}
                 </p>
                 <div class="flex flex-col pr-1.5">
                   <p class="font-light p-0 m-0 text-md text-green-500">
                     {{
-                      new Date(checkoutData.bookingData.checkin).toLocaleString(
+                      new Date(checkoutDataComputed.bookingData.checkin).toLocaleString(
                         "default",
                         {
                           month: "long",
-                        }
+                        },
                       )
                     }}
                   </p>
                   <p class="font-light p-0 m-0 text-lg text-green-500">
                     {{
-                      new Date(checkoutData.bookingData.checkin).getFullYear()
+                      new Date(checkoutDataComputed.bookingData.checkin).getFullYear()
                     }}
                   </p>
                 </div>
@@ -142,13 +142,13 @@
                 <p
                   class="font-bold my-1 custom-extra-bold px-1 text-4xl text-rose-500"
                 >
-                  {{ new Date(checkoutData.bookingData.checkout).getDate() }}
+                  {{ new Date(checkoutDataComputed.bookingData.checkout).getDate() }}
                 </p>
                 <div class="flex flex-col pr-1.5">
                   <p class="font-light p-0 m-0 text-md text-rose-500">
                     {{
                       new Date(
-                        checkoutData.bookingData.checkout
+                        checkoutDataComputed.bookingData.checkout,
                       ).toLocaleString("default", {
                         month: "long",
                       })
@@ -156,7 +156,7 @@
                   </p>
                   <p class="font-light p-0 m-0 text-lg text-rose-500">
                     {{
-                      new Date(checkoutData.bookingData.checkout).getFullYear()
+                      new Date(checkoutDataComputed.bookingData.checkout).getFullYear()
                     }}
                   </p>
                 </div>
@@ -168,21 +168,31 @@
     </div>
   </el-card>
   <cancellation-time-line-dialog></cancellation-time-line-dialog>
-
 </template>
 <script>
 import { mapState, mapMutations } from "vuex";
 export default {
+  props: {
+    checkoutData: {
+      type: Object,
+      default: null,
+    },
+  },
   data() {
     return {
       value: 3,
     };
   },
   computed: {
-    ...mapState("hotels", ["cancellationDialog", "checkoutData"]),
-
+    ...mapState("hotels", ["cancellationDialog"]),
+    // Use prop if provided, otherwise fall back to Vuex store
+    checkoutDataComputed() {
+      const data = this.checkoutData || this.$store.state.checkout.checkoutData;
+      console.log("ReviewCard - checkoutDataComputed:", data);
+      return data;
+    },
     // roomName(){
-    //     return   this.checkoutData.bookingData.rooms[0]?.name.split(" ").slice(0, 2).join(" ")
+    //     return   this.checkoutDataComputed.bookingData.rooms[0]?.name.split(" ").slice(0, 2).join(" ")
     // },
     /// state => hotels/availbleHotelsDetails ||
     ...mapState({
@@ -191,11 +201,10 @@ export default {
         return Object.assign(
           {},
           state.payment.hotel,
-          state.hotels.availbleHotelsDetails
+          state.hotels.availbleHotelsDetails,
         );
       },
       bookingDetails: (state) => state.payment.searchForm,
-      checkoutData: (state) => state.checkout.checkoutData,
     }),
   },
   methods: {
@@ -207,7 +216,7 @@ export default {
       let jsonDecoded = JSON.parse(decoded);
       console.log(jsonDecoded.uuid);
       this.$router.push(
-        `/HotelSearchResultsDetails/${this.hotelDetails.hotel.name}/${jsonDecoded.uuid}/${this.hotelDetails.hotel.id}`
+        `/HotelSearchResultsDetails/${this.hotelDetails.hotel.name}/${jsonDecoded.uuid}/${this.hotelDetails.hotel.id}`,
       );
     },
   },
