@@ -6,17 +6,28 @@ import {
 } from "./handlingErrors";
 let appInstance;
 let networkErrorLogged = false;
+
+// url
+const STAGING_BACKEND_URL = "https://stg-backend.happytbooking.com/";
+const STAGING_PYTHON_URL = "https://stg-py.happytbooking.com/";
+const PRODUCTION_BACKEND_URL = "https://backend.happytbooking.com/";
+const PRODUCTION_PYTHON_URL = "https://py.happytbooking.com/";
+
+export const BASE_URL = STAGING_BACKEND_URL;
+export const PYTHON_URL = STAGING_PYTHON_URL;
+
 // Function to set the Vue instance
 export function setVueInstance(instance) {
   appInstance = instance;
 }
+
 const Axios = axios.create({
-  baseURL: "https://backend.happytbooking.com/",
+  baseURL: BASE_URL,
   headers: { "Accept-Language": "EN" },
 });
 
 const AxiosSocket = axios.create({
-  baseURL: "https://stg-py.happytbooking.com/",
+  baseURL: PYTHON_URL,
   headers: { "Accept-Language": "EN" },
 });
 

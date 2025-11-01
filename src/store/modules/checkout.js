@@ -83,38 +83,35 @@ const actions = {
     };
 
     return axios
-      .get(
-        `https://stg-backend.happytbooking.com/api/hotel-vendors/hotel-booking/pre-book`,
-        {
-          params: payload,
-          paramsSerializer,
-        },
-      )
+      .get(`/api/hotel-vendors/hotel-booking/pre-book`, {
+        params: payload,
+        paramsSerializer,
+      })
       .then((res) => {
         console.log("state checkout  ", res.data);
         // The response structure is: { status, hotel, bookingData }
         // Handle both direct response and nested data structure
         const responseData = res.data?.data || res.data;
-        
+
         // Ensure we have valid data structure
         let checkoutData = {
           hotel: [],
           bookingData: {},
         };
-        
+
         if (responseData) {
           // Check if hotel and bookingData exist in response
           if (responseData.hotel) {
-            checkoutData.hotel = Array.isArray(responseData.hotel) 
-              ? responseData.hotel 
+            checkoutData.hotel = Array.isArray(responseData.hotel)
+              ? responseData.hotel
               : [responseData.hotel];
           }
-          
+
           if (responseData.bookingData) {
             checkoutData.bookingData = responseData.bookingData;
           }
         }
-        
+
         console.log("Committing checkoutData:", checkoutData);
         commit("SET_CHECKOUT_DATA", checkoutData);
         return checkoutData;
