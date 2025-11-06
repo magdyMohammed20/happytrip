@@ -7,6 +7,7 @@
 
 <script>
 import { mapState } from "vuex";
+
 export default {
   name: "PaymentSuccess",
   data() {
@@ -15,7 +16,7 @@ export default {
     };
   },
   computed: {
-    // ...mapState["payment"],
+    ...mapState(["payment"]),
   },
   async created() {
     await goSell.showResult({
@@ -87,7 +88,7 @@ export default {
               console.log(res);
               if (res.data.token) {
                 window.localStorage.setItem("guest_token", res.data.token);
-                console.log("iam token" , res.data.token);
+                console.log("iam token", res.data.token);
               }
               this.$router.push({
                 path: "/CheckOutPayment/" + res.data.bookingData.id,
