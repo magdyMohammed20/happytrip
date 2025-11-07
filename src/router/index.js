@@ -253,8 +253,8 @@ const router = createRouter({
     },
     {
       path: "/PaymentSuccessPage",
-      name: "PaymentSuccessPage",
-      component: () => import("@/views/PaymentSuccessPage.vue"),
+      name: "PaymentSuccessPageNew",
+      component: () => import("@/views/PaymentSuccessPageNew.vue"),
     },
   ],
 });
