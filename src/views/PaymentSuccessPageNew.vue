@@ -1,22 +1,34 @@
 <template>
-  <div class="container">
-    <div class="card">
-      <!-- Success Icon -->
-      <div class="icon">✓</div>
+  <div class="payment-wrapper">
+    <div class="container">
+      <div class="card">
+        <!-- Success Icon -->
+        <div class="icon">✓</div>
 
-      <!-- Message -->
-      <h1>Payment Successful!</h1>
-      <p>Your booking has been confirmed.</p>
+        <!-- Success Message -->
+        <h1>Payment Successful!</h1>
+        <p>Your payment has been processed successfully.</p>
 
-      <!-- Loading -->
-      <div v-if="loading" class="loading">Processing...</div>
+        <!-- Buttons -->
+        <div class="buttons">
+          <!-- Loading Button -->
+          <button v-if="loading" class="btn-primary btn-loading" disabled>
+            <div class="spinner-small"></div>
+            Processing Booking...
+          </button>
 
-      <!-- Buttons -->
-      <div v-else class="buttons">
-        <button v-if="bookingId" @click="viewBooking" class="btn-primary">
-          View Booking
-        </button>
-        <button @click="goHome" class="btn-secondary">Home</button>
+          <!-- View Booking Button (after processing) -->
+          <button
+            v-else-if="bookingId"
+            @click="viewBooking"
+            class="btn-primary"
+          >
+            View Booking
+          </button>
+
+          <!-- Home Button -->
+          <button @click="goHome" class="btn-secondary">Home</button>
+        </div>
       </div>
     </div>
   </div>
@@ -180,7 +192,7 @@ export default {
         coupon_id: this.couponData?.coupon?.id || "",
         loyality: 0,
         wallet: 0,
-        chg_id: query.tap_id || "chg_TS03A2120251415Fk8m0611200",
+        chg_id: query.tap_id || "chg_TS04A1620251158n1PR0711973",
         paymentCurrency: currency,
         currency: currency,
         status: "CAPTURED",
@@ -313,20 +325,24 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.payment-wrapper {
   width: 100vw;
   min-height: 100vh;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  overflow-y: auto;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card {
@@ -335,11 +351,29 @@ export default {
   padding: 50px 40px;
   max-width: 500px;
   width: 100%;
-  margin: auto;
   text-align: center;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 1;
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .icon {
@@ -354,46 +388,39 @@ export default {
   color: white;
   font-size: 50px;
   font-weight: bold;
-  flex-shrink: 0;
 }
 
 h1 {
   font-size: 28px;
   color: #333;
   margin-bottom: 10px;
-  word-wrap: break-word;
+  font-weight: 700;
 }
 
 p {
   color: #666;
   margin-bottom: 30px;
-  word-wrap: break-word;
-}
-
-.loading {
-  padding: 20px;
-  color: #667eea;
-  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .buttons {
   display: flex;
   gap: 15px;
-  flex-wrap: wrap;
   justify-content: center;
 }
 
 button {
-  flex: 1;
-  min-width: 120px;
-  padding: 12px 24px;
+  padding: 14px 30px;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-primary {
@@ -401,8 +428,14 @@ button {
   color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.btn-loading {
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 .btn-secondary {
@@ -416,13 +449,18 @@ button {
 }
 
 @media (max-width: 600px) {
+  .payment-wrapper {
+    width: 100vw;
+  }
+
   .container {
-    padding: 15px;
+    padding: 10px;
   }
 
   .card {
-    padding: 40px 25px;
-    max-width: 100%;
+    padding: 30px 20px;
+    width: 100%;
+    border-radius: 10px;
   }
 
   .buttons {
@@ -432,13 +470,6 @@ button {
 
   button {
     width: 100%;
-    flex: none;
-  }
-}
-
-@media (max-width: 400px) {
-  .card {
-    padding: 30px 20px;
   }
 
   h1 {
