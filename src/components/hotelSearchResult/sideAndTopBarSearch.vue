@@ -12,13 +12,13 @@
             <P class="font-bold mb-0 mt-0" v-if="!hotelsLoader">{{ availbleHotels.destination }}</P>
             <div class="flex align-center" v-if="!hotelsLoader">
 
-              <span class="text-xs font-bold mt-0 mb-0 text-slate-500">from :{{ availbleHotels?.checkIn ?
-                availbleHotels?.checkIn : availbleHotels.data.hotel_search?.check_in }} </span>
+              <span v-if="availbleHotels" class="text-xs font-bold mt-0 mb-0 text-slate-500">from :{{ availbleHotels?.checkIn ?
+                availbleHotels?.checkIn : availbleHotels?.data?.hotel_search?.check_in }} </span>
               <!-- music-note-whole -->
 
               <span class="text-xs font-bold mt-0 px-1 text-slate-500 flex align-center">
                 <span class="i-mdi-music-note-whole text-red text-sm"></span>
-                to:{{ availbleHotels?.checkOut ? availbleHotels?.checkOut : availbleHotels.data.hotel_search?.check_out
+                to:{{ availbleHotels?.checkOut ? availbleHotels?.checkOut : availbleHotels?.data?.hotel_search?.check_out
                 }}
               </span>
 
@@ -34,7 +34,7 @@
                 {{ availbleHotels.data.hotel_search }}
               </pre> -->
               <span class="text-xs font-bold pl-5 mt-0 mb-0 text-slate-500">
-                {{ availbleHotels?.data.hotel_search?.content.adults_num
+                {{ availbleHotels?.data?.hotel_search?.content?.adults_num
                 }} Adult <!-- {{
                   availbleHotels.data.hotel_search.content.kids_nums }} -->
 

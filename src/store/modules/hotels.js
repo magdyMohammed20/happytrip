@@ -126,10 +126,20 @@ const actions = {
           localStorage.setItem("availbleHotels", JSON.stringify(response));
           commit("SET_AVAILABLE_HOTELS_LOADER", false);
           commit("SET_ENABLE_FILTERS", true);
+          
           state.connection.close();
         }
+
+        if (response.code == 400) { 
+          localStorage.removeItem("availbleHotels");
+          commit("SET_AVAILABLE_HOTELS_LOADER", null);
+
+          commit("SET_ENABLE_FILTERS", false);
+        }
+
       } catch (err) {
         commit("SET_AVAILABLE_HOTELS_LOADER", false);
+        
         state.connection.close();
       }
     };
@@ -320,7 +330,7 @@ const actions = {
     );
   },
 
-  fetchRoomById({ commit }, roomId) {
+  /* fetchRoomById({ commit }, roomId) {
     // Fetch individual room details by room ID
     return AxiosSocket.get(`/api/v1/rooms/${roomId}`)
       .then((res) => {
@@ -330,7 +340,7 @@ const actions = {
         console.error("Error fetching room by ID:", error);
         throw error;
       });
-  },
+  }, */
 
   convertCurrency({ state, commit }, { from, to, amount = 100 }) {
     return fetch(
