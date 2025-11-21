@@ -35,8 +35,8 @@
                   <span
                     class="i-mdi-home text-white text-xl pl-1 handle-hover"
                   />
-                  header.home
-                  <!-- {{ $t("header.home") }} -->
+                  
+                  {{ $t("header.home") }}
                 </el-menu-item>
               </router-link>
 

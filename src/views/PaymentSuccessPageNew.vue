@@ -164,7 +164,6 @@ export default {
       const currency =
         hotelData.currency || localStorage.getItem("CURR") || "SAR";
 
-
       // Build the payload matching the curl structure
       const payload = {
         // Hotel & Booking Info (from checkoutData)
@@ -193,11 +192,11 @@ export default {
         coupon_id: this.couponData?.coupon?.id || "",
         loyality: 0,
         wallet: 0,
-        chg_id: this.$route.query.tab_id ,
+        chg_id: this.$route.query.tap_id ,
         paymentCurrency: currency,
         currency: currency,
         status: "CAPTURED",
-        payment_type: this.$route.query.tab_id ? "tap_payment" : "tap_payment",
+        payment_type: this.$route.query.tap_id ? "tap_payment" : "tap_payment",
         is_free: 0,
         platForm: "web",
 
